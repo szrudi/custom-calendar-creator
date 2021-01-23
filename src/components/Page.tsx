@@ -14,11 +14,11 @@ import {Box, Container, makeStyles} from "@material-ui/core";
  * @param {Props} props
  */
 const Page = ({children, ratio}: Props) => {
-    let aspectRatio = Math.round(ratio * 1000) / 1000;
-    let isPortrait = aspectRatio <= 1;
-    let scale = .9;
-    let unit = isPortrait ? 'vh' : 'vw';
-    let PageCss: PageCss = {
+    const aspectRatio = Math.round(ratio * 1000) / 1000;
+    const isPortrait = aspectRatio <= 1;
+    const scale = .9;
+    const unit = isPortrait ? 'vh' : 'vw';
+    const PageCss: PageCss = {
         widthPercent: (isPortrait ? aspectRatio : 1) * 100 * scale + unit,
         heightPercent: (isPortrait ? 1 : 1 / aspectRatio) * 100 * scale + unit,
     }
