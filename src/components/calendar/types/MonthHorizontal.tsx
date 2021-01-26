@@ -2,13 +2,17 @@ import React from 'react';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Paper from "@material-ui/core/Paper";
+import {enUS} from 'date-fns/locale'
+import {endOfMonth, format, formatISO, getDate, getDay, isFirstDayOfMonth} from "date-fns";
+import eachDayOfInterval from 'date-fns/eachDayOfInterval'
 
 const MonthHorizontal = ({year = 2021, month = 1}) => {
+    let firstDayOfMonth = new Date(year, month - 1, 1);
+    let days = eachDayOfInterval({start: firstDayOfMonth, end: endOfMonth(firstDayOfMonth)});
+    const isMondayFirstOfWeek = false;
+    const columnStart = getDay(firstDayOfMonth) + (isMondayFirstOfWeek ? 0 : 1);
+    const monthName = format(firstDayOfMonth, "LLLL", {locale: enUS})
     const classes = useStyles();
-    let days = getDays(year, month);
-    let date = new Date(year, month, 0);
-    let monthFormat = new Intl.DateTimeFormat('hu-HU', {month: 'long'});
-    let monthName = monthFormat.format(date);
 
     return (<>
         <Typography variant="h2" gutterBottom align={"center"}>
@@ -16,8 +20,9 @@ const MonthHorizontal = ({year = 2021, month = 1}) => {
         </Typography>
         <div className={classes.container}>
             {days.map(day => (
-                <div style={{gridColumnEnd: 'span 1'}} key={`${year}-${month}-${day}`}>
-                    {day > 0 && <Paper className={classes.paper}>{day}.</Paper>}
+                <div style={{gridColumnStart: isFirstDayOfMonth(day) ? columnStart : 'auto'}}
+                     key={formatISO(day, {representation: 'date'})}>
+                    <Paper className={classes.paper}>{getDate(day)}.</Paper>
                 </div>
             ))}
         </div>
@@ -45,14 +50,3 @@ const useStyles = makeStyles((theme: Theme) =>
         },
     }),
 );
-
-function getDays(fullYear: number, month: number): number[] {
-    let date = new Date(fullYear, month, 0);
-    const isMondayFirstOfWeek = true;
-    const firstDayOfMonth = date.getDay() - (isMondayFirstOfWeek ? 1 : 0);
-    let days = [];
-    for (let i = -firstDayOfMonth; i <= date.getDate(); i++) {
-        days.push(i);
-    }
-    return days;
-}

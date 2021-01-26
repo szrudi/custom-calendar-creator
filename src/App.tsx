@@ -8,7 +8,7 @@ function App() {
         <>
             <CssBaseline/>
             <Page ratio={210 / 297}>
-                <Calendar type='month' />
+                <Calendar type='month'/>
             </Page>
         </>
     );
