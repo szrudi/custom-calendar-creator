@@ -1,27 +1,30 @@
 import React from "react";
 import MonthHorizontal from "./types/MonthHorizontal";
 
-const Calendar = ({type}: CalendarProps) => {
-    type = type.toLowerCase().trim();
+const Calendar = (options: CalendarProps) => {
     return (
-        <div id={`${type}-calendar`}>
-            {getCalendar(type)}
+        <div id={`${options.type}-calendar`}>
+            {getCalendar(options)}
         </div>
     );
 };
 
-const getCalendar = (name: string): React.ReactNode => {
-    switch (name) {
+const getCalendar = (options: CalendarProps): React.ReactNode => {
+    switch (options.type) {
         case "month":
         case "month-horizontal":
-            return <MonthHorizontal/>;
+            return <MonthHorizontal year={options.year} month={options.month}/>;
         default:
             return "";
     }
 };
 
+type calendarTypes = 'month' | 'month-horizontal';
+
 interface CalendarProps {
-    type: string;
+    type: calendarTypes,
+    year: number,
+    month: number
 }
 
 export default Calendar;

@@ -1,31 +1,36 @@
 import React from 'react';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import Paper from "@material-ui/core/Paper";
 import {enUS} from 'date-fns/locale'
-import {endOfMonth, format, formatISO, getDate, getDay, isFirstDayOfMonth} from "date-fns";
+import {endOfMonth, endOfWeek, format, getDay, getWeek, isSameMonth, startOfWeek} from "date-fns";
 import eachDayOfInterval from 'date-fns/eachDayOfInterval'
+import Day from "../Day";
 
-const MonthHorizontal = ({year = 2021, month = 1}) => {
-    let firstDayOfMonth = new Date(year, month - 1, 1);
-    let days = eachDayOfInterval({start: firstDayOfMonth, end: endOfMonth(firstDayOfMonth)});
-    const isMondayFirstOfWeek = false;
-    const columnStart = getDay(firstDayOfMonth) + (isMondayFirstOfWeek ? 0 : 1);
+const MonthHorizontal = ({year, month}: { year: number, month: number }) => {
+    const firstDayOfMonth = new Date(year, month - 1, 1);
+    const interval = {start: firstDayOfMonth, end: endOfMonth(firstDayOfMonth)};
+    const isMondayFirstOfWeek = true;
+    const days = getDaysOfWeeks(interval, {weekStartsOn: (isMondayFirstOfWeek ? 1 : 0)});
     const monthName = format(firstDayOfMonth, "LLLL", {locale: enUS})
-    const classes = useStyles();
 
+    const classes = useStyles();
     return (<>
         <Typography variant="h2" gutterBottom align={"center"}>
             {monthName}
         </Typography>
-        <div className={classes.container}>
-            {days.map(day => (
-                <div style={{gridColumnStart: isFirstDayOfMonth(day) ? columnStart : 'auto'}}
-                     key={formatISO(day, {representation: 'date'})}>
-                    <Paper className={classes.paper}>{getDate(day)}.</Paper>
-                </div>
+        <table className={classes.monthTable}>
+            <tbody>
+            {Array.from(days.weeks).map(([weekNumber, week]) => (
+                <tr key={`${year}-${weekNumber}`}>
+                    {Array.from(week).map(([dayOfWeek, day]) => (
+                        <td key={dayOfWeek}>
+                            {isSameMonth(day, firstDayOfMonth) && <Day date={day}/>}
+                        </td>
+                    ))}
+                </tr>
             ))}
-        </div>
+            </tbody>
+        </table>
     </>);
 };
 
@@ -33,20 +38,38 @@ export default MonthHorizontal;
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
-        container: {
-            display: 'grid',
-            gridTemplateColumns: 'repeat(7, minmax(10px, 1fr))',
-            gridGap: theme.spacing(3),
+        monthTable: {
+            width: '100%',
+            borderCollapse: 'collapse',
+            borderStyle: 'hidden',
+            '&  td': {
+                padding: 0,
+                borderWidth: 2,
+                borderStyle: 'solid',
+                borderColor: theme.palette.grey.A700,
+            },
         },
-        paper: {
-            padding: theme.spacing(1),
-            textAlign: 'center',
-            color: theme.palette.text.secondary,
-            whiteSpace: 'nowrap',
-            marginBottom: theme.spacing(1),
-        },
-        divider: {
-            margin: theme.spacing(2, 0),
-        },
-    }),
+    })
 );
+
+const getDaysOfWeeks = ({start, end}: Interval, options: { weekStartsOn?: weekDays }): daysByWeek => {
+    const interval = {
+        start: startOfWeek(start, options),
+        end: endOfWeek(end, options)
+    };
+    let days: daysByWeek = {weeks: new Map()};
+    for (const day of eachDayOfInterval(interval)) {
+        const weekNumber = getWeek(day, options);
+        const dayOfWeek = getDay(day);
+        let week = days.weeks.get(weekNumber) ?? new Map();
+        week.set(dayOfWeek, day);
+        days.weeks.set(weekNumber, week);
+    }
+    return days;
+};
+
+interface daysByWeek {
+    weeks: Map<number, Map<number, Date>>;
+}
+
+type weekDays = 0 | 1 | 2 | 3 | 4 | 5 | 6;
