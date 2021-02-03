@@ -1,16 +1,23 @@
 import React from 'react';
 import {CssBaseline} from "@material-ui/core";
-import Page from "./components/Page";
-import Calendar from "./components/calendar";
-import {getMonth, getYear} from "date-fns";
+import {BrowserRouter, Link, Route, Switch} from "react-router-dom";
+import CalendarPreview from "./components/CalendarPreview";
 
 function App() {
-    const currentDate = new Date();
     return (<>
         <CssBaseline/>
-        <Page ratio={210 / 297}>
-            <Calendar type='month' year={getYear(currentDate)} month={getMonth(currentDate) + 1}/>
-        </Page>
+        <BrowserRouter>
+            <Switch>
+                <Route exact path={"/"}>
+                    <h1>Hello</h1>
+                    <Link to={"editor"}>Editor</Link>
+                </Route>
+                <Route exact path={"/editor"}>
+                    <h1>Editor</h1>
+                    <CalendarPreview/>
+                </Route>
+            </Switch>
+        </BrowserRouter>
     </>);
 }
 
