@@ -10,17 +10,28 @@ const MonthHorizontal = ({firstDay}: { firstDay: Date }) => {
     const interval = {start: firstDay, end: endOfMonth(firstDay)};
     const isMondayFirstOfWeek = true;
     const days = getDaysOfWeeks(interval, {weekStartsOn: (isMondayFirstOfWeek ? 1 : 0)});
+    const year = getYear(firstDay);
     const monthName = format(firstDay, "LLLL", {locale: enUS})
+    const weeksArray = Array.from(days.weeks);
 
+    const [, firstWeek] = weeksArray[0];
     const classes = useStyles();
     return (<>
         <Typography variant="h2" gutterBottom align={"center"}>
-            {monthName}
+            {year} - {monthName}
         </Typography>
         <table className={classes.monthTable}>
+            <thead>
+            <tr>
+                <th>{/* week numbers column */}</th>
+                {Array.from(firstWeek).map(([, day]) =>
+                    <th>{format(day, 'EEE')}</th>)}
+            </tr>
+            </thead>
             <tbody>
-            {Array.from(days.weeks).map(([weekNumber, week]) => (
-                <tr key={`${getYear(firstDay)}-${weekNumber}`}>
+            {weeksArray.map(([weekNumber, week]) => (
+                <tr key={`${year}-${weekNumber}`}>
+                    <th>{weekNumber}</th>
                     {Array.from(week).map(([dayOfWeek, day]) => (
                         <td key={dayOfWeek}>
                             {isSameMonth(day, firstDay) && <Day date={day}/>}
@@ -41,7 +52,7 @@ const useStyles = makeStyles((theme: Theme) =>
             width: '100%',
             borderCollapse: 'collapse',
             borderStyle: 'hidden',
-            '&  td': {
+            '&  td, &  th': {
                 padding: 0,
                 borderWidth: 2,
                 borderStyle: 'solid',
