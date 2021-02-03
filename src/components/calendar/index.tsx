@@ -13,7 +13,7 @@ const getCalendar = (options: CalendarProps): React.ReactNode => {
     switch (options.type) {
         case "month":
         case "month-horizontal":
-            return <MonthHorizontal year={options.year} month={options.month}/>;
+            return <MonthHorizontal firstDay={options.firstDay}/>;
         default:
             return "";
     }
@@ -23,8 +23,7 @@ type calendarTypes = 'month' | 'month-horizontal';
 
 interface CalendarProps {
     type: calendarTypes,
-    year: number,
-    month: number
+    firstDay: Date,
 }
 
 export default Calendar;

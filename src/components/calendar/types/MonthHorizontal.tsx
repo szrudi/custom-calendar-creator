@@ -2,16 +2,15 @@ import React from 'react';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import {enUS} from 'date-fns/locale'
-import {endOfMonth, endOfWeek, format, getDay, getWeek, isSameMonth, startOfWeek} from "date-fns";
+import {endOfMonth, endOfWeek, format, getDay, getWeek, getYear, isSameMonth, startOfWeek} from "date-fns";
 import eachDayOfInterval from 'date-fns/eachDayOfInterval'
 import Day from "../Day";
 
-const MonthHorizontal = ({year, month}: { year: number, month: number }) => {
-    const firstDayOfMonth = new Date(year, month - 1, 1);
-    const interval = {start: firstDayOfMonth, end: endOfMonth(firstDayOfMonth)};
+const MonthHorizontal = ({firstDay}: { firstDay: Date }) => {
+    const interval = {start: firstDay, end: endOfMonth(firstDay)};
     const isMondayFirstOfWeek = true;
     const days = getDaysOfWeeks(interval, {weekStartsOn: (isMondayFirstOfWeek ? 1 : 0)});
-    const monthName = format(firstDayOfMonth, "LLLL", {locale: enUS})
+    const monthName = format(firstDay, "LLLL", {locale: enUS})
 
     const classes = useStyles();
     return (<>
@@ -21,10 +20,10 @@ const MonthHorizontal = ({year, month}: { year: number, month: number }) => {
         <table className={classes.monthTable}>
             <tbody>
             {Array.from(days.weeks).map(([weekNumber, week]) => (
-                <tr key={`${year}-${weekNumber}`}>
+                <tr key={`${getYear(firstDay)}-${weekNumber}`}>
                     {Array.from(week).map(([dayOfWeek, day]) => (
                         <td key={dayOfWeek}>
-                            {isSameMonth(day, firstDayOfMonth) && <Day date={day}/>}
+                            {isSameMonth(day, firstDay) && <Day date={day}/>}
                         </td>
                     ))}
                 </tr>
