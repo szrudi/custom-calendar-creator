@@ -62,11 +62,13 @@ const useStyles = makeStyles((theme: Theme) =>
     })
 );
 
-const getDaysOfWeeks = ({start, end}: Interval, options: { weekStartsOn?: weekDays }): daysByWeek => {
+const getDaysOfWeeks = ({start, end}: Interval, options: dateOptions): daysByWeek => {
+    options = {firstWeekContainsDate: getFirstWeekContainsDate(options), ...options};
     const interval = {
         start: startOfWeek(start, options),
         end: endOfWeek(end, options)
     };
+
     let days: daysByWeek = {weeks: new Map()};
     for (const day of eachDayOfInterval(interval)) {
         const weekNumber = getWeek(day, options);
@@ -78,8 +80,28 @@ const getDaysOfWeeks = ({start, end}: Interval, options: { weekStartsOn?: weekDa
     return days;
 };
 
+function getFirstWeekContainsDate(options: dateOptions): sevenDays {
+    let firstWeekContainsDate: sevenDays = 1;
+    // https://en.wikipedia.org/wiki/Week#Week_numbering
+    if (options.weekStartsOn === 1) {
+        // ISO-8601 when week starts on Monday
+        firstWeekContainsDate = 4;
+    } else if (options.weekStartsOn === 0) {
+        firstWeekContainsDate = 5;
+    } else if (options.weekStartsOn === 6) {
+        firstWeekContainsDate = 6;
+    }
+    return firstWeekContainsDate;
+}
+
 interface daysByWeek {
     weeks: Map<number, Map<number, Date>>;
 }
 
+interface dateOptions {
+    weekStartsOn?: weekDays,
+    firstWeekContainsDate?: sevenDays
+}
+
 type weekDays = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+type sevenDays = 1 | 2 | 3 | 4 | 5 | 6 | 7;
