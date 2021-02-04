@@ -63,7 +63,9 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const getDaysOfWeeks = ({start, end}: Interval, options: dateOptions): daysByWeek => {
-    options = {firstWeekContainsDate: getFirstWeekContainsDate(options), ...options};
+    if (options.firstWeekContainsDate === undefined) {
+        options = {firstWeekContainsDate: getFirstWeekContainsDate(options), ...options};
+    }
     const interval = {
         start: startOfWeek(start, options),
         end: endOfWeek(end, options)
@@ -81,17 +83,17 @@ const getDaysOfWeeks = ({start, end}: Interval, options: dateOptions): daysByWee
 };
 
 function getFirstWeekContainsDate(options: dateOptions): sevenDays {
-    let firstWeekContainsDate: sevenDays = 1;
     // https://en.wikipedia.org/wiki/Week#Week_numbering
-    if (options.weekStartsOn === 1) {
-        // ISO-8601 when week starts on Monday
-        firstWeekContainsDate = 4;
-    } else if (options.weekStartsOn === 0) {
-        firstWeekContainsDate = 5;
-    } else if (options.weekStartsOn === 6) {
-        firstWeekContainsDate = 6;
+    switch (options.weekStartsOn) {
+        case 1: // ISO-8601 when week starts on Monday
+            return 4;
+        case 0:
+            return 5;
+        case 6:
+            return 6;
+        default:
+            return 1;
     }
-    return firstWeekContainsDate;
 }
 
 interface daysByWeek {

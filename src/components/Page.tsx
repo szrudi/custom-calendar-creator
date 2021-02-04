@@ -7,9 +7,9 @@ import {Box, Container, makeStyles} from "@material-ui/core";
  * Thanks [jessepinho](https://github.com/jessepinho) for the inspiration in your
  * [blogpost](https://medium.com/bleeding-edge/enforcing-an-aspect-ratio-on-an-html-element-in-react-and-css-27a13241c3d4).
  *
- * @param {Props} props
+ * @param {PageProps} props
  */
-const Page = ({children, width, height, dpi = 300}: Props) => {
+const Page = ({children, width, height, dpi = 300}: PageProps) => {
     const aspectRatio = Math.round(width / height * 1000) / 1000;
     const isPortrait = aspectRatio <= 1;
     const scale = .9;
@@ -51,7 +51,7 @@ const useStyles = makeStyles({
     }
 });
 
-interface Props {
+interface PageProps {
     children?: any,
     width: number,
     height: number,
