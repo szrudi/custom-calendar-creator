@@ -1,17 +1,24 @@
 import React from 'react';
-import CalendarElement from "./components/CalendarElement";
 import {CssBaseline} from "@material-ui/core";
-import Page from "./components/Page";
+import {BrowserRouter, Link, Route, Switch} from "react-router-dom";
+import CalendarPreview from "./components/CalendarPreview";
 
 function App() {
-    return (
-        <>
-            <CssBaseline/>
-            <Page ratio={210 / 297}>
-                <CalendarElement/>
-            </Page>
-        </>
-    );
+    return (<>
+        <CssBaseline/>
+        <BrowserRouter>
+            <Switch>
+                <Route exact path={"/"}>
+                    <h1>Hello</h1>
+                    <Link to={"editor"}>Editor</Link>
+                </Route>
+                <Route exact path={"/editor"}>
+                    <h1>Editor</h1>
+                    <CalendarPreview/>
+                </Route>
+            </Switch>
+        </BrowserRouter>
+    </>);
 }
 
 export default App;

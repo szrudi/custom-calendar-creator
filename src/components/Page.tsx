@@ -4,17 +4,13 @@ import {Box, Container, makeStyles} from "@material-ui/core";
 /**
  * Fixed aspect ratio Page component.
  *
- * The ratio is the width divided by the height. This ratio can be passed in
- * using JavaScript division syntax. So, to get a 16:9 ratio,
- * simply pass `ratio={16/9}`
- *
  * Thanks [jessepinho](https://github.com/jessepinho) for the inspiration in your
  * [blogpost](https://medium.com/bleeding-edge/enforcing-an-aspect-ratio-on-an-html-element-in-react-and-css-27a13241c3d4).
  *
- * @param {Props} props
+ * @param {PageProps} props
  */
-const Page = ({children, ratio}: Props) => {
-    const aspectRatio = Math.round(ratio * 1000) / 1000;
+const Page = ({children, width, height, dpi = 300}: PageProps) => {
+    const aspectRatio = Math.round(width / height * 1000) / 1000;
     const isPortrait = aspectRatio <= 1;
     const scale = .9;
     const unit = isPortrait ? 'vh' : 'vw';
@@ -23,6 +19,7 @@ const Page = ({children, ratio}: Props) => {
         heightPercent: (isPortrait ? 1 : 1 / aspectRatio) * 100 * scale + unit,
     }
     const classes = useStyles(PageCss);
+
     return (
         <Container className={classes.outerWrapper}>
             <div className={classes.innerWrapper}>
@@ -54,9 +51,11 @@ const useStyles = makeStyles({
     }
 });
 
-interface Props {
+interface PageProps {
     children?: any,
-    ratio: number,
+    width: number,
+    height: number,
+    dpi?: 150 | 300 | 600,
 }
 
 interface PageCss {
