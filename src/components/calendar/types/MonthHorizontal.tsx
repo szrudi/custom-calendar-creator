@@ -14,12 +14,13 @@ import {
 } from "date-fns";
 import eachDayOfInterval from "date-fns/eachDayOfInterval";
 import Day from "../Day";
+import { daysOfWeek } from "../../../helpers/Globals";
 
 const MonthHorizontal = ({ firstDay }: { firstDay: Date }) => {
   const interval = { start: firstDay, end: endOfMonth(firstDay) };
   const isMondayFirstOfWeek = true;
   const days = getDaysOfWeeks(interval, {
-    weekStartsOn: isMondayFirstOfWeek ? 1 : 0,
+    weekStartsOn: isMondayFirstOfWeek ? daysOfWeek.Monday : daysOfWeek.Sunday,
   });
   const year = getYear(firstDay);
   const monthName = format(firstDay, "LLLL", { locale: enUS });
@@ -97,11 +98,11 @@ const getDaysOfWeeks = ({ start, end }: Interval, options: dateOptions): daysByW
 function getFirstWeekContainsDate(options: dateOptions): dateOptions["firstWeekContainsDate"] {
   // https://en.wikipedia.org/wiki/Week#Week_numbering
   switch (options.weekStartsOn) {
-    case 1: // ISO-8601 when week starts on Monday
+    case daysOfWeek.Monday: // ISO-8601 when week starts on Monday
       return 4;
-    case 0:
+    case daysOfWeek.Sunday:
       return 5;
-    case 6:
+    case daysOfWeek.Saturday:
       return 6;
     default:
       return 1;
