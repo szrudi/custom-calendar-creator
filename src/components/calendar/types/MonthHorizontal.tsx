@@ -94,7 +94,7 @@ const getDaysOfWeeks = ({ start, end }: Interval, options: dateOptions): daysByW
   return days;
 };
 
-function getFirstWeekContainsDate(options: dateOptions): sevenDays {
+function getFirstWeekContainsDate(options: dateOptions): dateOptions["firstWeekContainsDate"] {
   // https://en.wikipedia.org/wiki/Week#Week_numbering
   switch (options.weekStartsOn) {
     case 1: // ISO-8601 when week starts on Monday
@@ -108,14 +108,6 @@ function getFirstWeekContainsDate(options: dateOptions): sevenDays {
   }
 }
 
-interface daysByWeek {
-  weeks: Map<number, Map<number, Date>>;
-}
-
-interface dateOptions {
-  weekStartsOn?: weekDays;
-  firstWeekContainsDate?: sevenDays;
-}
-
-type weekDays = 0 | 1 | 2 | 3 | 4 | 5 | 6;
-type sevenDays = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+type optionsParameter = Parameters<typeof getWeek>[1];
+type dateOptions = NonNullable<optionsParameter>;
+type daysByWeek = { weeks: Map<number, Map<number, Date>> };
