@@ -2,11 +2,7 @@ import React from "react";
 import MonthHorizontal from "./types/MonthHorizontal";
 
 const Calendar = (options: CalendarProps) => {
-    return (
-        <div id={`${options.type}-calendar`}>
-            {getCalendar(options)}
-        </div>
-    );
+    return <div id={`${options.type}-calendar`}>{getCalendar(options)}</div>;
 };
 
 const getCalendar = (options: CalendarProps): React.ReactNode => {
