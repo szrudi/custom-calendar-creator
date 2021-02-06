@@ -51,16 +51,16 @@ const useStyles = makeStyles({
   },
 });
 
-interface PageProps {
+type PageProps = {
   children?: any;
   width: number;
   height: number;
   dpi?: 150 | 300 | 600;
-}
+};
 
-interface PageCss {
+type PageCss = {
   widthPercent: string;
   heightPercent: string;
-}
+};
 
 export default Page;

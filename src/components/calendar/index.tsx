@@ -17,9 +17,9 @@ const getCalendar = (options: CalendarProps): React.ReactNode => {
 
 type calendarTypes = 'month' | 'month-horizontal';
 
-interface CalendarProps {
-    type: calendarTypes,
-    firstDay: Date,
-}
+type CalendarProps = {
+  type: calendarTypes;
+  firstDay: Date;
+};
 
 export default Calendar;
