@@ -8,7 +8,7 @@ const CalendarPreview = () => {
   return (
     <>
       <Page width={210} height={297}>
-        <Calendar type="month" firstDay={currentDate} />
+        <Calendar type="month" firstDay={currentDate} width={550} top={500} left={40} />
       </Page>
     </>
   );
