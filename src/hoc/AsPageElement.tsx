@@ -46,7 +46,7 @@ const useStyles = makeStyles({
     left: (props: ElementPlacementProps) => props.left,
     width: (props: ElementPlacementProps) => props.width,
     height: (props: ElementPlacementProps) => props.height,
-    transform: (props: ElementPlacementProps) => `rotate(${props.rotate}deg`,
+    transform: (props: ElementPlacementProps) => `rotate(${props.rotate}deg)`,
     background: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
     border: 0,
     borderRadius: 3,
