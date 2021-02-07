@@ -1,7 +1,9 @@
 import React from "react";
+import { Box } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
 
 /**
- * AsPageElement HOC: we can add positioning to Page Elements
+ * asPageElement HOC: we can add positioning to Page Elements
  *
  * based on https://react-typescript-cheatsheet.netlify.app/docs/hoc/intro
  *
@@ -21,15 +23,8 @@ const asPageElement = <P extends object, WP extends P & Partial<ElementPlacement
     rotate = 0,
     ...componentProps
   }: WP) {
-    const style: React.CSSProperties = {
-      top,
-      left,
-      width,
-      height,
-      position: "relative",
-      transform: `rotate(${rotate}deg)`,
-    };
-    return <div style={style}>{Component(componentProps as P)}</div>;
+    const classes = useStyles({ top, left, width, height, rotate });
+    return <Box className={classes.element}>{Component(componentProps as P)}</Box>;
   }
 
   WrapperComponent.displayName = `asPageElement(${componentName})`;
@@ -43,3 +38,18 @@ type ElementPlacementProps = Record<
 >;
 
 export default asPageElement;
+
+const useStyles = makeStyles({
+  element: {
+    position: "relative",
+    top: (props: ElementPlacementProps) => props.top,
+    left: (props: ElementPlacementProps) => props.left,
+    width: (props: ElementPlacementProps) => props.width,
+    height: (props: ElementPlacementProps) => props.height,
+    transform: (props: ElementPlacementProps) => `rotate(${props.rotate}deg`,
+    background: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
+    border: 0,
+    borderRadius: 3,
+    color: "white",
+  },
+});

@@ -1,6 +1,6 @@
 import React from "react";
 import MonthHorizontal from "./types/MonthHorizontal";
-import asPageElement from "../AsPageElement";
+import asPageElement from "../../hoc/AsPageElement";
 
 const Calendar = (options: CalendarProps) => {
   return (
