@@ -37,8 +37,8 @@ const MonthHorizontal = ({ firstDay }: { firstDay: Date }) => {
         <thead>
           <tr>
             <th>{/* week numbers column */}</th>
-            {Array.from(firstWeek).map(([, day]) => (
-              <th>{format(day, "EEE")}</th>
+            {Array.from(firstWeek).map(([dayOfWeek, day]) => (
+              <th key={dayOfWeek}>{format(day, "EEE")}</th>
             ))}
           </tr>
         </thead>
