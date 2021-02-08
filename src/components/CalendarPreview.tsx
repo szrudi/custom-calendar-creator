@@ -1,17 +1,24 @@
 import React from "react";
 import Page from "./Page";
-import Calendar from "./calendar";
+import Calendar, { CalendarElementProps } from "./calendar";
 import { startOfMonth } from "date-fns";
+import { daysOfWeek } from "../helpers/Globals";
 
 const CalendarPreview = () => {
-  const firstDayOfMonth = startOfMonth(new Date());
+  const calendarOptions: CalendarElementProps = {
+    type: "month",
+    firstDay: startOfMonth(new Date()),
+    weekStartsOn: daysOfWeek.Monday,
+    width: 550,
+    top: 450,
+    left: 40,
+    rotate: 3,
+  };
 
   return (
-    <>
-      <Page width={210} height={297}>
-        <Calendar type="month" firstDay={firstDayOfMonth} width={550} top={500} left={40} rotate={3} />
-      </Page>
-    </>
+    <Page width={210} height={297}>
+      <Calendar {...calendarOptions} />
+    </Page>
   );
 };
 

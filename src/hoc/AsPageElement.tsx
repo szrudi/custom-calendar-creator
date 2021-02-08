@@ -32,7 +32,7 @@ const asPageElement = <P extends object, WP extends P & Partial<ElementPlacement
   return PageElement;
 };
 
-type ElementPlacementProps = Record<
+export type ElementPlacementProps = Record<
   "top" | "left" | "width" | "height" | "rotate",
   number | string
 >;

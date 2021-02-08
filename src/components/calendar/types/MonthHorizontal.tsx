@@ -2,33 +2,32 @@ import React from "react";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import { enUS } from "date-fns/locale";
-import {
-  endOfMonth,
-  endOfWeek,
-  format,
-  getDay,
-  getWeek,
-  getYear,
-  isSameMonth,
-  startOfMonth,
-  startOfWeek,
-} from "date-fns";
-import eachDayOfInterval from "date-fns/eachDayOfInterval";
+import { endOfMonth, format, getYear, isSameMonth, startOfMonth } from "date-fns";
 import Day from "../Day";
-import { daysOfWeek } from "../../../helpers/Globals";
+import { CalendarProps, getDaysOfWeeks, warnAboutNotImplementedOptions } from "../index";
 
-const MonthHorizontal = ({ dayOfMonth }: { dayOfMonth: Date }) => {
-  const interval = { start: startOfMonth(dayOfMonth), end: endOfMonth(dayOfMonth) };
-  const isMondayFirstOfWeek = true;
-  const days = getDaysOfWeeks(interval, {
-    weekStartsOn: isMondayFirstOfWeek ? daysOfWeek.Monday : daysOfWeek.Sunday,
-  });
-  const year = getYear(dayOfMonth);
-  const monthName = format(dayOfMonth, "LLLL", { locale: enUS });
-  const weeksArray = Array.from(days.weeks);
+const notImplementedOptions = [
+  "showGrid",
+  "showWeekNumbers",
+  "showNameDays",
+  "showHolidays",
+  "showCustomEvents",
+  "showWeekends",
+];
 
+const MonthHorizontal = (options: CalendarProps) => {
+  warnAboutNotImplementedOptions(options, notImplementedOptions);
+  const daysOfMonthInterval = {
+    start: startOfMonth(options.firstDay),
+    end: endOfMonth(options.firstDay),
+  };
+  const daysVisible = getDaysOfWeeks(daysOfMonthInterval, { weekStartsOn: options.weekStartsOn });
+  const year = getYear(daysOfMonthInterval.start);
+  const monthName = format(daysOfMonthInterval.start, "LLLL", { locale: enUS });
+  const weeksArray = Array.from(daysVisible.weeks);
   const [, firstWeek] = weeksArray[0];
   const classes = useStyles();
+
   return (
     <>
       <Typography variant="h2" gutterBottom align={"center"}>
@@ -48,7 +47,9 @@ const MonthHorizontal = ({ dayOfMonth }: { dayOfMonth: Date }) => {
             <tr key={`${year}-${weekNumber}`}>
               <th>{weekNumber}</th>
               {Array.from(week).map(([dayOfWeek, day]) => (
-                <td key={dayOfWeek}>{isSameMonth(day, dayOfMonth) && <Day date={day} />}</td>
+                <td key={dayOfWeek}>
+                  {isSameMonth(day, daysOfMonthInterval.start) && <Day date={day} />}
+                </td>
               ))}
             </tr>
           ))}
@@ -57,6 +58,8 @@ const MonthHorizontal = ({ dayOfMonth }: { dayOfMonth: Date }) => {
     </>
   );
 };
+
+export type monthHorizontalNames = "month" | "month-horizontal";
 
 export default MonthHorizontal;
 
@@ -75,41 +78,3 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
-
-const getDaysOfWeeks = ({ start, end }: Interval, options: dateOptions): daysByWeek => {
-  if (options.firstWeekContainsDate === undefined) {
-    options = { firstWeekContainsDate: getFirstWeekContainsDate(options), ...options };
-  }
-  const interval = {
-    start: startOfWeek(start, options),
-    end: endOfWeek(end, options),
-  };
-
-  let days: daysByWeek = { weeks: new Map() };
-  for (const day of eachDayOfInterval(interval)) {
-    const weekNumber = getWeek(day, options);
-    const dayOfWeek = getDay(day);
-    let week = days.weeks.get(weekNumber) ?? new Map();
-    week.set(dayOfWeek, day);
-    days.weeks.set(weekNumber, week);
-  }
-  return days;
-};
-
-function getFirstWeekContainsDate(options: dateOptions): dateOptions["firstWeekContainsDate"] {
-  // https://en.wikipedia.org/wiki/Week#Week_numbering
-  switch (options.weekStartsOn) {
-    case daysOfWeek.Monday: // ISO-8601 when week starts on Monday
-      return 4;
-    case daysOfWeek.Sunday:
-      return 5;
-    case daysOfWeek.Saturday:
-      return 6;
-    default:
-      return 1;
-  }
-}
-
-type optionsParameter = Parameters<typeof getWeek>[1];
-type dateOptions = NonNullable<optionsParameter>;
-type daysByWeek = { weeks: Map<number, Map<number, Date>> };
