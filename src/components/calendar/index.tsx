@@ -14,7 +14,7 @@ const getCalendar = (options: CalendarProps): React.ReactNode => {
   switch (options.type) {
     case "month":
     case "month-horizontal":
-      return <MonthHorizontal firstDay={options.firstDay} />;
+      return <MonthHorizontal dayOfMonth={options.firstDay} />;
     default:
       return "";
   }
