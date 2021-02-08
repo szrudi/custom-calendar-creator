@@ -1,13 +1,13 @@
 import React from "react";
 import { Box } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, Theme } from "@material-ui/core/styles";
 
 /**
  * asPageElement HOC: we can add positioning to Page Elements
  *
  * based on https://react-typescript-cheatsheet.netlify.app/docs/hoc/intro
  *
- * @param Component The component to wrap, a Page Element
+ * @param Component The component to wrap
  * @param componentName
  */
 
@@ -15,7 +15,7 @@ const asPageElement = <P extends object, WP extends P & Partial<ElementPlacement
   Component: { (props: P): Exclude<React.ReactNode, undefined>; displayName?: string },
   componentName = Component.displayName ?? Component.name
 ): { (props: WP): JSX.Element; displayName: string } => {
-  function WrapperComponent({
+  function PageElement({
     top = 0,
     left = 0,
     width = "auto",
@@ -27,9 +27,9 @@ const asPageElement = <P extends object, WP extends P & Partial<ElementPlacement
     return <Box className={classes.element}>{Component(componentProps as P)}</Box>;
   }
 
-  WrapperComponent.displayName = `asPageElement(${componentName})`;
+  PageElement.displayName = `asPageElement(${componentName})`;
 
-  return WrapperComponent;
+  return PageElement;
 };
 
 type ElementPlacementProps = Record<
@@ -39,14 +39,14 @@ type ElementPlacementProps = Record<
 
 export default asPageElement;
 
-const useStyles = makeStyles({
+const useStyles = makeStyles<Theme, ElementPlacementProps>({
   element: {
     position: "relative",
-    top: (props: ElementPlacementProps) => props.top,
-    left: (props: ElementPlacementProps) => props.left,
-    width: (props: ElementPlacementProps) => props.width,
-    height: (props: ElementPlacementProps) => props.height,
-    transform: (props: ElementPlacementProps) => `rotate(${props.rotate}deg)`,
+    top: (props) => props.top,
+    left: (props) => props.left,
+    width: (props) => props.width,
+    height: (props) => props.height,
+    transform: (props) => `rotate(${props.rotate}deg)`,
     background: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
     border: 0,
     borderRadius: 3,
