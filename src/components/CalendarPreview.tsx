@@ -9,7 +9,7 @@ const CalendarPreview = () => {
   return (
     <>
       <Page width={210} height={297}>
-        <Calendar type="month" firstDay={firstDayOfMonth} />
+        <Calendar type="month" firstDay={firstDayOfMonth} width={550} top={500} left={40} rotate={3} />
       </Page>
     </>
   );

@@ -1,8 +1,13 @@
 import React from "react";
 import MonthHorizontal from "./types/MonthHorizontal";
+import asPageElement from "../../hoc/AsPageElement";
 
 const Calendar = (options: CalendarProps) => {
-  return <div id={`${options.type}-calendar`}>{getCalendar(options)}</div>;
+  return (
+    <div style={{ height: "100%" }} id={`${options.type}-calendar`}>
+      {getCalendar(options)}
+    </div>
+  );
 };
 
 const getCalendar = (options: CalendarProps): React.ReactNode => {
@@ -22,4 +27,4 @@ type CalendarProps = {
   firstDay: Date;
 };
 
-export default Calendar;
+export default asPageElement(Calendar);
