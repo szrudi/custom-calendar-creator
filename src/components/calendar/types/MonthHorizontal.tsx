@@ -10,20 +10,21 @@ import {
   getWeek,
   getYear,
   isSameMonth,
+  startOfMonth,
   startOfWeek,
 } from "date-fns";
 import eachDayOfInterval from "date-fns/eachDayOfInterval";
 import Day from "../Day";
 import { daysOfWeek } from "../../../helpers/Globals";
 
-const MonthHorizontal = ({ firstDay }: { firstDay: Date }) => {
-  const interval = { start: firstDay, end: endOfMonth(firstDay) };
+const MonthHorizontal = ({ dayOfMonth }: { dayOfMonth: Date }) => {
+  const interval = { start: startOfMonth(dayOfMonth), end: endOfMonth(dayOfMonth) };
   const isMondayFirstOfWeek = true;
   const days = getDaysOfWeeks(interval, {
     weekStartsOn: isMondayFirstOfWeek ? daysOfWeek.Monday : daysOfWeek.Sunday,
   });
-  const year = getYear(firstDay);
-  const monthName = format(firstDay, "LLLL", { locale: enUS });
+  const year = getYear(dayOfMonth);
+  const monthName = format(dayOfMonth, "LLLL", { locale: enUS });
   const weeksArray = Array.from(days.weeks);
 
   const [, firstWeek] = weeksArray[0];
@@ -47,7 +48,7 @@ const MonthHorizontal = ({ firstDay }: { firstDay: Date }) => {
             <tr key={`${year}-${weekNumber}`}>
               <th>{weekNumber}</th>
               {Array.from(week).map(([dayOfWeek, day]) => (
-                <td key={dayOfWeek}>{isSameMonth(day, firstDay) && <Day date={day} />}</td>
+                <td key={dayOfWeek}>{isSameMonth(day, dayOfMonth) && <Day date={day} />}</td>
               ))}
             </tr>
           ))}
