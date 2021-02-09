@@ -18,8 +18,8 @@ const notImplementedOptions = [
 const WeekHorizontal = (options: CalendarProps) => {
   warnAboutNotImplementedOptions(options, notImplementedOptions);
   const daysOfMonthInterval = {
-    start: startOfWeek(options.firstDay, { locale: enUS }),
-    end: endOfWeek(options.firstDay, { locale: enUS }),
+    start: startOfWeek(options.firstDay, options),
+    end: endOfWeek(options.firstDay, options),
   };
   const daysVisible = getDaysOfWeeks(daysOfMonthInterval, { weekStartsOn: options.weekStartsOn });
   const year = getYear(daysOfMonthInterval.start);
