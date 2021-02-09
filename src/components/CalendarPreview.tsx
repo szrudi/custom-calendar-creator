@@ -7,10 +7,10 @@ import { daysOfWeek } from "../helpers/Globals";
 const CalendarPreview = () => {
   const calendarOptions: CalendarElementProps = {
     type: "month",
-    firstDay: startOfMonth(new Date()),
+    firstDay: new Date(),
     weekStartsOn: daysOfWeek.Monday,
     width: 550,
-    top: 250,
+    top: 450,
     left: 40,
     rotate: 3,
   };
