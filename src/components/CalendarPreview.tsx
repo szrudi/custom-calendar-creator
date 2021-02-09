@@ -10,13 +10,18 @@ const CalendarPreview = () => {
     firstDay: startOfMonth(new Date()),
     weekStartsOn: daysOfWeek.Monday,
     width: 550,
-    top: 450,
+    top: 250,
     left: 40,
     rotate: 3,
   };
 
+  const weekCalendarOptions = { ...calendarOptions };
+  weekCalendarOptions.top = 150;
+  weekCalendarOptions.type = "week";
+
   return (
     <Page width={210} height={297}>
+      <Calendar {...weekCalendarOptions} />
       <Calendar {...calendarOptions} />
     </Page>
   );

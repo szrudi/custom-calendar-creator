@@ -1,10 +1,11 @@
 import React from "react";
-import MonthHorizontal, { monthHorizontalNames } from "./types/MonthHorizontal";
 import { endOfWeek, getDay, getWeek, startOfWeek } from "date-fns";
 import { assertNever, daysOfWeek } from "../../helpers/Globals";
 import eachDayOfInterval from "date-fns/eachDayOfInterval";
 import { Box } from "@material-ui/core";
 import asPageElement, { ElementPlacementProps } from "../../hoc/AsPageElement";
+import WeekHorizontal, { weekHorizontalNames } from "./types/WeekHorizontal";
+import MonthHorizontal, { monthHorizontalNames } from "./types/MonthHorizontal";
 
 const Calendar = (options: CalendarProps) => {
   return (
@@ -16,7 +17,7 @@ const Calendar = (options: CalendarProps) => {
 
 export default asPageElement(Calendar);
 
-type calendarTypes = monthHorizontalNames;
+type calendarTypes = monthHorizontalNames | weekHorizontalNames;
 
 export type CalendarProps = {
   /** All implemented Calendar types */
@@ -38,13 +39,16 @@ const getCalendar = (options: CalendarProps): React.ReactNode => {
     case "month":
     case "month-horizontal":
       return <MonthHorizontal {...options} />;
+    case "week":
+    case "week-horizontal":
+      return <WeekHorizontal {...options} />;
     default:
       return assertNever(options.type);
   }
 };
 
 type getWeekOptions = Parameters<typeof getWeek>[1];
-type dateOptions = Omit<NonNullable<getWeekOptions>, "locale">;
+type dateOptions = NonNullable<getWeekOptions>;
 type daysByWeek = { weeks: Map<number, Map<number, Date>> };
 
 export const getDaysOfWeeks = ({ start, end }: Interval, options: dateOptions): daysByWeek => {
