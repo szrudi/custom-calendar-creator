@@ -21,13 +21,8 @@ const CalendarPreview = () => {
     rotate: 3,
   };
 
-  const weekCalendarOptions = { ...calendarOptions };
-  weekCalendarOptions.top = 150;
-  weekCalendarOptions.type = "week";
-
   return (
     <Page width={210} height={297}>
-      <Calendar {...weekCalendarOptions} />
       <Calendar {...calendarOptions} />
     </Page>
   );
