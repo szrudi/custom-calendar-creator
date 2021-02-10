@@ -3,7 +3,8 @@ import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import { endOfWeek, format, getDay, getWeek, getYear, isSameMonth, startOfWeek } from "date-fns";
 import Day from "../Day";
-import { CalendarProps, getDaysOfWeeks, warnAboutNotImplementedOptions } from "../index";
+import { CalendarElementProps, getDaysOfWeeks, warnAboutNotImplementedOptions } from "../index";
+import { ElementPlacementProps } from "../../../hoc/AsPageElement";
 
 const notImplementedOptions = [
   "showGrid",
@@ -14,7 +15,7 @@ const notImplementedOptions = [
   "showWeekends",
 ];
 
-const WeekHorizontal = (options: CalendarProps) => {
+const WeekHorizontal = (options: Omit<CalendarElementProps, keyof ElementPlacementProps>) => {
   warnAboutNotImplementedOptions(options, notImplementedOptions);
   const daysOfWeekInterval = {
     start: startOfWeek(options.firstDay, options),

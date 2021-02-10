@@ -19,7 +19,7 @@ export default asPageElement(Calendar);
 
 type calendarTypes = monthHorizontalNames | weekHorizontalNames;
 
-export type CalendarProps = {
+type CalendarProps = {
   /** All implemented Calendar types */
   type: calendarTypes;
   /** The calendar should start with this date */
