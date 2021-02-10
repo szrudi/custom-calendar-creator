@@ -24,6 +24,7 @@ export type CalendarProps = {
   /** The calendar should start with this date */
   firstDay: Date;
   weekStartsOn?: daysOfWeek;
+  locale?: Locale;
   showGrid?: boolean;
   showWeekNumbers?: boolean;
   showNameDays?: boolean;

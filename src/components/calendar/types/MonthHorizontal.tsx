@@ -1,7 +1,6 @@
 import React from "react";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
-import { enUS } from "date-fns/locale";
 import { endOfMonth, format, getDay, getWeek, getYear, isSameMonth, startOfMonth } from "date-fns";
 import Day from "../Day";
 import { CalendarProps, getDaysOfWeeks, warnAboutNotImplementedOptions } from "../index";
@@ -23,7 +22,7 @@ const MonthHorizontal = (options: CalendarProps) => {
   };
   const daysOfWeeks = getDaysOfWeeks(daysOfMonthInterval, options);
   const year = getYear(daysOfMonthInterval.start);
-  const monthName = format(daysOfMonthInterval.start, "LLLL", { locale: enUS });
+  const monthName = format(daysOfMonthInterval.start, "LLLL", options);
 
   const classes = useStyles();
 
@@ -37,14 +36,14 @@ const MonthHorizontal = (options: CalendarProps) => {
           <tr>
             <th>{/* week numbers column */}</th>
             {daysOfWeeks[0].map((day) => (
-              <th key={getDay(day)}>{format(day, "EEE")}</th>
+              <th key={getDay(day)}>{format(day, "EEE", options)}</th>
             ))}
           </tr>
         </thead>
         <tbody>
           {daysOfWeeks.map((week) => (
-            <tr key={`${year}-${getWeek(week[0])}`}>
-              <th>{getWeek(week[0])}</th>
+            <tr key={`${year}-${getWeek(week[0], options)}`}>
+              <th>{getWeek(week[0], options)}</th>
               {week.map((day) => (
                 <td key={getDay(day)}>
                   {isSameMonth(day, daysOfMonthInterval.start) && <Day date={day} />}

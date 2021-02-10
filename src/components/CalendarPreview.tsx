@@ -2,12 +2,14 @@ import React from "react";
 import Page from "./Page";
 import Calendar, { CalendarElementProps } from "./calendar";
 import { daysOfWeek } from "../helpers/Globals";
+import { enUS } from "date-fns/locale";
 
 const CalendarPreview = () => {
   const calendarOptions: CalendarElementProps = {
     type: "month",
     firstDay: new Date(),
     weekStartsOn: daysOfWeek.Monday,
+    locale: enUS,
     width: 550,
     top: 450,
     left: 40,
