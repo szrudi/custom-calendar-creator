@@ -2,7 +2,7 @@ import React from "react";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import { enUS } from "date-fns/locale";
-import { endOfMonth, format, getYear, isSameMonth, startOfMonth } from "date-fns";
+import { endOfMonth, format, getDay, getWeek, getYear, isSameMonth, startOfMonth } from "date-fns";
 import Day from "../Day";
 import { CalendarProps, getDaysOfWeeks, warnAboutNotImplementedOptions } from "../index";
 
@@ -21,11 +21,10 @@ const MonthHorizontal = (options: CalendarProps) => {
     start: startOfMonth(options.firstDay),
     end: endOfMonth(options.firstDay),
   };
-  const daysVisible = getDaysOfWeeks(daysOfMonthInterval, { weekStartsOn: options.weekStartsOn });
+  const daysOfWeeks = getDaysOfWeeks(daysOfMonthInterval, options);
   const year = getYear(daysOfMonthInterval.start);
   const monthName = format(daysOfMonthInterval.start, "LLLL", { locale: enUS });
-  const weeksArray = Array.from(daysVisible.weeks);
-  const [, firstWeek] = weeksArray[0];
+
   const classes = useStyles();
 
   return (
@@ -37,17 +36,17 @@ const MonthHorizontal = (options: CalendarProps) => {
         <thead>
           <tr>
             <th>{/* week numbers column */}</th>
-            {Array.from(firstWeek).map(([dayOfWeek, day]) => (
-              <th key={dayOfWeek}>{format(day, "EEE")}</th>
+            {daysOfWeeks[0].map((day) => (
+              <th key={getDay(day)}>{format(day, "EEE")}</th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {weeksArray.map(([weekNumber, week]) => (
-            <tr key={`${year}-${weekNumber}`}>
-              <th>{weekNumber}</th>
-              {Array.from(week).map(([dayOfWeek, day]) => (
-                <td key={dayOfWeek}>
+          {daysOfWeeks.map((week) => (
+            <tr key={`${year}-${getWeek(week[0])}`}>
+              <th>{getWeek(week[0])}</th>
+              {week.map((day) => (
+                <td key={getDay(day)}>
                   {isSameMonth(day, daysOfMonthInterval.start) && <Day date={day} />}
                 </td>
               ))}
