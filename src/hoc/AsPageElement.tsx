@@ -41,7 +41,7 @@ export default asPageElement;
 
 const useStyles = makeStyles<Theme, ElementPlacementProps>({
   element: {
-    position: "relative",
+    position: "absolute",
     top: (props) => props.top,
     left: (props) => props.left,
     width: (props) => props.width,

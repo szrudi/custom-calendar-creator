@@ -1,14 +1,20 @@
 import React from "react";
 import Page from "./Page";
 import Calendar, { CalendarElementProps } from "./calendar";
-import { startOfMonth } from "date-fns";
-import { daysOfWeek } from "../helpers/Globals";
+import { useLocale } from "../hooks/useLocale";
 
 const CalendarPreview = () => {
+  const [locale] = useLocale();
+
+  if (!locale) return null;
+
   const calendarOptions: CalendarElementProps = {
     type: "month",
-    firstDay: startOfMonth(new Date()),
-    weekStartsOn: daysOfWeek.Monday,
+    firstDay: new Date(),
+    // weekStartsOn: daysOfWeek.Monday,
+    locale: locale!,
+    // locale: nl,
+    // locale: hu,
     width: 550,
     top: 450,
     left: 40,

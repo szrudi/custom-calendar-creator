@@ -1,12 +1,13 @@
 import React from "react";
-import MonthHorizontal, { monthHorizontalNames } from "./types/MonthHorizontal";
-import { endOfWeek, getDay, getWeek, startOfWeek } from "date-fns";
+import { eachDayOfInterval, eachWeekOfInterval, endOfWeek, getWeek, startOfWeek } from "date-fns";
 import { assertNever, daysOfWeek } from "../../helpers/Globals";
-import eachDayOfInterval from "date-fns/eachDayOfInterval";
 import { Box } from "@material-ui/core";
 import asPageElement, { ElementPlacementProps } from "../../hoc/AsPageElement";
+import WeekHorizontal, { weekHorizontalNames } from "./types/WeekHorizontal";
+import MonthHorizontal, { monthHorizontalNames } from "./types/MonthHorizontal";
 
 const Calendar = (options: CalendarProps) => {
+  options = { ...options.locale?.options, ...options };
   return (
     <Box style={{ height: "auto" }} id={`${options.type}-calendar`}>
       {getCalendar(options)}
@@ -16,14 +17,16 @@ const Calendar = (options: CalendarProps) => {
 
 export default asPageElement(Calendar);
 
-type calendarTypes = monthHorizontalNames;
+type calendarTypes = monthHorizontalNames | weekHorizontalNames;
 
-export type CalendarProps = {
+type CalendarProps = {
   /** All implemented Calendar types */
   type: calendarTypes;
   /** The calendar should start with this date */
   firstDay: Date;
   weekStartsOn?: daysOfWeek;
+  firstWeekContainsDate?: dateOptions["firstWeekContainsDate"];
+  locale?: Locale;
   showGrid?: boolean;
   showWeekNumbers?: boolean;
   showNameDays?: boolean;
@@ -38,38 +41,38 @@ const getCalendar = (options: CalendarProps): React.ReactNode => {
     case "month":
     case "month-horizontal":
       return <MonthHorizontal {...options} />;
+    case "week":
+    case "week-horizontal":
+      return <WeekHorizontal {...options} />;
     default:
       return assertNever(options.type);
   }
 };
 
 type getWeekOptions = Parameters<typeof getWeek>[1];
-type dateOptions = Omit<NonNullable<getWeekOptions>, "locale">;
-type daysByWeek = { weeks: Map<number, Map<number, Date>> };
+type dateOptions = NonNullable<getWeekOptions>;
+type daysByWeek = Array<Array<Date>>;
 
-export const getDaysOfWeeks = ({ start, end }: Interval, options: dateOptions): daysByWeek => {
-  if (options.firstWeekContainsDate === undefined) {
-    options = { firstWeekContainsDate: getFirstWeekContainsDate(options), ...options };
-  }
+export const getDaysOfWeeks = (
+  { start, end }: Interval,
+  { weekStartsOn, firstWeekContainsDate = getFirstWeekContainsDate(weekStartsOn) }: dateOptions
+): daysByWeek => {
+  const options = { weekStartsOn, firstWeekContainsDate };
   const interval = {
     start: startOfWeek(start, options),
     end: endOfWeek(end, options),
   };
 
-  let days: daysByWeek = { weeks: new Map() };
-  for (const day of eachDayOfInterval(interval)) {
-    const weekNumber = getWeek(day, options);
-    const dayOfWeek = getDay(day);
-    let week = days.weeks.get(weekNumber) ?? new Map();
-    week.set(dayOfWeek, day);
-    days.weeks.set(weekNumber, week);
-  }
-  return days;
+  return eachWeekOfInterval(interval, options).map((weekStart) =>
+    eachDayOfInterval({ start: weekStart, end: endOfWeek(weekStart, options) })
+  );
 };
 
-function getFirstWeekContainsDate(options: dateOptions): dateOptions["firstWeekContainsDate"] {
+function getFirstWeekContainsDate(
+  weekStartsOn: dateOptions["weekStartsOn"]
+): NonNullable<dateOptions["firstWeekContainsDate"]> {
   // https://en.wikipedia.org/wiki/Week#Week_numbering
-  switch (options.weekStartsOn) {
+  switch (weekStartsOn) {
     case daysOfWeek.Monday: // ISO-8601 when week starts on Monday
       return 4;
     case daysOfWeek.Sunday:

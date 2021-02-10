@@ -1,7 +1,7 @@
 import React from "react";
 import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
-import { endOfMonth, format, getDay, getWeek, getYear, isSameMonth, startOfMonth } from "date-fns";
+import { endOfWeek, format, getDay, getWeek, getYear, isSameMonth, startOfWeek } from "date-fns";
 import Day from "../Day";
 import { CalendarElementProps, getDaysOfWeeks, warnAboutNotImplementedOptions } from "../index";
 import { ElementPlacementProps } from "../../../hoc/AsPageElement";
@@ -15,15 +15,15 @@ const notImplementedOptions = [
   "showWeekends",
 ];
 
-const MonthHorizontal = (options: Omit<CalendarElementProps, keyof ElementPlacementProps>) => {
+const WeekHorizontal = (options: Omit<CalendarElementProps, keyof ElementPlacementProps>) => {
   warnAboutNotImplementedOptions(options, notImplementedOptions);
-  const daysOfMonthInterval = {
-    start: startOfMonth(options.firstDay),
-    end: endOfMonth(options.firstDay),
+  const daysOfWeekInterval = {
+    start: startOfWeek(options.firstDay, options),
+    end: endOfWeek(options.firstDay, options),
   };
-  const daysOfWeeks = getDaysOfWeeks(daysOfMonthInterval, options);
-  const year = getYear(daysOfMonthInterval.start);
-  const monthName = format(daysOfMonthInterval.start, "LLLL", options);
+  const daysOfWeeks = getDaysOfWeeks(daysOfWeekInterval, options);
+  const year = getYear(daysOfWeekInterval.start);
+  const monthName = format(daysOfWeekInterval.start, "LLLL", options);
 
   const classes = useStyles();
 
@@ -47,7 +47,7 @@ const MonthHorizontal = (options: Omit<CalendarElementProps, keyof ElementPlacem
               <th>{getWeek(week[0], options)}</th>
               {week.map((day) => (
                 <td key={getDay(day)}>
-                  {isSameMonth(day, daysOfMonthInterval.start) && <Day date={day} />}
+                  {isSameMonth(day, daysOfWeekInterval.start) && <Day date={day} />}
                 </td>
               ))}
             </tr>
@@ -58,9 +58,9 @@ const MonthHorizontal = (options: Omit<CalendarElementProps, keyof ElementPlacem
   );
 };
 
-export type monthHorizontalNames = "month" | "month-horizontal";
+export type weekHorizontalNames = "week" | "week-horizontal";
 
-export default MonthHorizontal;
+export default WeekHorizontal;
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
