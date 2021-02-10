@@ -7,6 +7,7 @@ import WeekHorizontal, { weekHorizontalNames } from "./types/WeekHorizontal";
 import MonthHorizontal, { monthHorizontalNames } from "./types/MonthHorizontal";
 
 const Calendar = (options: CalendarProps) => {
+  options = { ...options.locale?.options, ...options };
   return (
     <Box style={{ height: "auto" }} id={`${options.type}-calendar`}>
       {getCalendar(options)}
@@ -24,6 +25,7 @@ export type CalendarProps = {
   /** The calendar should start with this date */
   firstDay: Date;
   weekStartsOn?: daysOfWeek;
+  firstWeekContainsDate?: dateOptions["firstWeekContainsDate"];
   locale?: Locale;
   showGrid?: boolean;
   showWeekNumbers?: boolean;
@@ -62,7 +64,7 @@ export const getDaysOfWeeks = (
   };
 
   return eachWeekOfInterval(interval, options).map((weekStart) =>
-    eachDayOfInterval({ start: weekStart, end: endOfWeek(weekStart) })
+    eachDayOfInterval({ start: weekStart, end: endOfWeek(weekStart, options) })
   );
 };
 

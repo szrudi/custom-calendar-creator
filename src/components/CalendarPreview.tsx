@@ -10,6 +10,8 @@ const CalendarPreview = () => {
     firstDay: new Date(),
     weekStartsOn: daysOfWeek.Monday,
     locale: enUS,
+    // locale: nl,
+    // locale: hu,
     width: 550,
     top: 450,
     left: 40,
