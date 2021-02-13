@@ -25,9 +25,9 @@ const layouts = [
           y: "0",
           width: "100%",
           height: "100%",
-          rotate: "0"
-        }
-      }
+          rotate: "0",
+        },
+      },
     ],
     textBoxes: [
       {
@@ -39,9 +39,9 @@ const layouts = [
           y: "90%",
           width: "100%",
           height: "10%",
-          rotate: "0"
-        }
-      }
-    ]
-  }
+          rotate: "0",
+        },
+      },
+    ],
+  },
 ];

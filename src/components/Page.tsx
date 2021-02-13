@@ -9,7 +9,11 @@ import { Box, Container, makeStyles } from "@material-ui/core";
  *
  * @param {PageProps} props
  */
-const Page = ({ children, width, height, dpi = 300 }: PageProps) => {
+const Page = ({ children, width, height, ppi = 300 }: PageProps) => {
+  // const widthPx = Math.round((ppi * width) / 25.4);
+  // const heightPx = Math.round((ppi * height) / 25.4);
+  // const scale = 900 / heightPx; // TODO: correct scale?
+
   const aspectRatio = Math.round((width / height) * 1000) / 1000;
   const isPortrait = aspectRatio <= 1;
   const scale = 0.9;
@@ -55,7 +59,7 @@ type PageProps = {
   children?: any;
   width: number;
   height: number;
-  dpi?: 150 | 300 | 600;
+  ppi?: 150 | 300 | 600;
 };
 
 type PageCss = {

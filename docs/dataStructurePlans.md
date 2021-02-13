@@ -67,21 +67,21 @@ create a `Printable Calendar`.
     name: "A4-vertical",
     width: 210,
     height: 297,
-    dpi: 300,
+    ppi: 300,
   },
   {
     id: 2,
     name: "A3",
     width: 297,
     height: 420,
-    dpi: 300,
+    ppi: 300,
   },
   {
     id: 3,
     name: "120×180-landscape",
     width: 180,
     height: 120,
-    dpi: 300,
+    ppi: 300,
   },
 ];
 ```
