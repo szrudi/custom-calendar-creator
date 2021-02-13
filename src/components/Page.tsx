@@ -1,70 +1,43 @@
 import React from "react";
-import { Box, Container, makeStyles } from "@material-ui/core";
+import { Box, makeStyles } from "@material-ui/core";
+import clsx from "clsx";
 
 /**
  * Fixed aspect ratio Page component.
  *
- * Thanks [jessepinho](https://github.com/jessepinho) for the inspiration in your
- * [blogpost](https://medium.com/bleeding-edge/enforcing-an-aspect-ratio-on-an-html-element-in-react-and-css-27a13241c3d4).
- *
  * @param {PageProps} props
  */
-const Page = ({ children, width, height, ppi = 300 }: PageProps) => {
-  // const widthPx = Math.round((ppi * width) / 25.4);
-  // const heightPx = Math.round((ppi * height) / 25.4);
-  // const scale = 900 / heightPx; // TODO: correct scale?
+const Page = ({ children }: PageProps) => {
+  const classes = useStyles();
 
-  const aspectRatio = Math.round((width / height) * 1000) / 1000;
-  const isPortrait = aspectRatio <= 1;
-  const scale = 0.9;
-  const unit = isPortrait ? "vh" : "vw";
-  const PageCss: PageCss = {
-    widthPercent: (isPortrait ? aspectRatio : 1) * 100 * scale + unit,
-    heightPercent: (isPortrait ? 1 : 1 / aspectRatio) * 100 * scale + unit,
-  };
-  const classes = useStyles(PageCss);
-
-  return (
-    <Container className={classes.outerWrapper}>
-      <div className={classes.innerWrapper}>
-        <Box bgcolor="info.main" className={classes.page}>
-          {children}
-        </Box>
-      </div>
-    </Container>
-  );
+  return <Box className={clsx(classes.page, classes.pageScale)}>{children}</Box>;
 };
 
-const useStyles = makeStyles({
-  outerWrapper: {
-    position: "relative",
-    width: (props: PageCss) => props.widthPercent,
-    height: 0,
-    paddingBottom: (props: PageCss) => props.heightPercent,
-  },
-  innerWrapper: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-  },
+const useStyles = makeStyles((theme) => ({
   page: {
-    width: "100%",
-    height: "100%",
+    position: "relative",
+    width: "calc(1px * var(--full-page-width))",
+    height: "calc(1px * var(--full-page-height))",
+    backgroundColor: theme.palette.info.main,
   },
-});
+  pageScale: {
+    transformOrigin: "top left",
+    transform: "scale(var(--preview-scale))",
+    top: "calc(1px * var(--preview-top, 0))",
+    left: "calc(1px * var(--preview-left, 0))",
+  },
+}));
 
-type PageProps = {
-  children?: any;
+export type PageSize = {
+  id: number;
+  name: string;
   width: number;
   height: number;
-  ppi?: 150 | 300 | 600;
+  ppi: 150 | 300 | 600;
 };
-
-type PageCss = {
-  widthPercent: string;
-  heightPercent: string;
+type PageProps = {
+  children?: JSX.Element[] | JSX.Element;
+  pageSize: PageSize;
 };
 
 export default Page;

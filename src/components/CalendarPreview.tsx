@@ -1,126 +1,88 @@
-import React from "react";
-import Page from "./Page";
+import React, { useLayoutEffect } from "react";
+import Page, { PageSize } from "./Page";
 import Calendar, { CalendarElementProps } from "./calendar";
 import { useLocale } from "../hooks/useLocale";
+import { makeStyles, Theme } from "@material-ui/core/styles";
+import clsx from "clsx";
+import { convertSize, pageSizes, pageTemplates } from "../helpers/Globals";
+import { Container } from "@material-ui/core";
+import { PageElement } from "../hoc/AsPageElement";
 import Content, { ContentElementProps } from "./Content";
 
 const CalendarPreview = () => {
-  const [locale] = useLocale();
-  if (!locale) return null;
-
   let pageTemplate = pageTemplates[0];
   let pageSize = pageSizes.find((ps) => ps.id === pageTemplate.defaultPageSize) ?? pageSizes[0];
-  return (
-    <Page width={pageSize.width} height={pageSize.height}>
-      {pageTemplate.elements.map((element) => getPageElement(element, locale))}
-    </Page>
+
+  const [locale] = useLocale();
+  const classes = useStyles({ pageSize });
+  useLayoutEffect(trackWindowSizeChange, []);
+
+  return !locale ? null : (
+    <Container className={clsx(classes.pageScaleVariables, classes.previewWrapper)}>
+      <Page pageSize={pageSize}>
+        {pageTemplate.elements.map((element) => getPageElement(element))}
+      </Page>
+    </Container>
   );
 };
 
 export default CalendarPreview;
 
-const getPageElement = (elementOptions: any, locale: Locale | null) => {
-  switch (elementOptions.component) {
+function trackWindowSizeChange() {
+  function setInnerSize() {
+    const root = document.documentElement;
+    root.style.setProperty("--inner-width", `${window.innerWidth}`);
+    root.style.setProperty("--inner-height", `${window.innerHeight}`);
+  }
+
+  setInnerSize();
+  window.addEventListener("resize", setInnerSize);
+  return () => window.removeEventListener("resize", setInnerSize);
+}
+
+const getPageElement = (props: PageElement): JSX.Element => {
+  switch (props.componentName) {
     case "Calendar":
-      const calendarOptions: CalendarElementProps = {
-        type: "month",
-        firstDay: new Date(),
-        // weekStartsOn: daysOfWeek.Monday,
-        locale: locale!,
-        // locale: nl,
-        // locale: hu,
-        width: 550,
-        top: 450,
-        left: 40,
-        rotate: 3,
-      };
-      // const calendarOptions: CalendarElementProps = {
-      //   type: elementOptions.type,
-      //   firstDay: startOfMonth(new Date()),
-      //   ...elementOptions.options,
-      //   ...elementOptions.placement,
-      // };
-      return <Calendar {...calendarOptions} />;
+      return <Calendar {...(props as CalendarElementProps)} key={props.componentName} />;
     case "Content":
-      const contentOptions: ContentElementProps = {
-        layoutId: elementOptions.layout,
-        ...elementOptions.options,
-        ...elementOptions.placement,
-      };
-      return <Content {...contentOptions} />;
+      return <Content {...(props as ContentElementProps)} key={props.componentName} />;
     default:
       return <></>;
   }
 };
 
-const pageTemplates = [
-  {
-    id: 1,
-    defaultPageSize: 1,
-    possiblePageSizes: [1, 2],
-    elements: [
-      {
-        component: "Calendar",
-        type: "month",
-        cardinality: 1,
-        variant: "horizontal",
-        /**
-         * Placements are in mm, we can calculate the placements in pixels
-         * using the defaultPageSize data
-         */
-        placement: {
-          top: 160,
-          left: 10,
-          width: 190,
-          height: 117,
-          rotate: 0,
-        },
-        options: {
-          startOfWeek: "0-6",
-          showGrid: true,
-          showWeekNumbers: true,
-          showNameDays: false,
-          showHolidays: true,
-          showCustomEvents: true,
-          showWeekends: true,
-        },
-      },
-      {
-        component: "Content",
-        layout: 1,
-        placement: {
-          top: 10,
-          left: 10,
-          width: 190,
-          height: 150,
-          rotate: 0,
-        },
-        options: {},
-      },
-    ],
+const useStyles = makeStyles<Theme, { pageSize: PageSize }>({
+  "@global": {
+    ":root": {
+      "--inner-width": 800,
+      "--inner-height": 800,
+    },
   },
-];
+  pageScaleVariables: {
+    "--preview-padding": 10,
+    "--other-content-height": "calc(120 + var(--preview-padding)*2)",
 
-const pageSizes = [
-  {
-    id: 1,
-    name: "A4-vertical",
-    width: 210,
-    height: 297,
-    ppi: 300,
+    "--full-page-width": ({ pageSize: ps }) => convertSize(ps.width, ps.ppi),
+    "--full-page-height": ({ pageSize: ps }) => convertSize(ps.height, ps.ppi),
+
+    "--aspect-ratio": "calc(var(--full-page-height) / var(--full-page-width))",
+    "--smaller-side": "calc(min(var(--inner-height),var(--inner-width)*var(--aspect-ratio)))",
+
+    "--preview-page-height": "calc(max(var(--smaller-side) - var(--other-content-height), 200))",
+    "--preview-page-width": "calc(var(--preview-page-height) / var(--aspect-ratio))",
+
+    "--page-scale": "calc(var(--preview-page-height) / var(--full-page-height))",
+    "--preview-scale": "var(--page-scale)",
   },
-  {
-    id: 2,
-    name: "A3",
-    width: 297,
-    height: 420,
-    ppi: 300,
+  previewWrapper: {
+    margin: "0 20px",
+    padding: "calc(1px * var(--preview-padding))",
+    outline: "2px solid #555",
+    backgroundColor: "lightblue",
+    width: "calc(1px * (var(--preview-page-width) + var(--preview-padding)*2))",
+    height: "calc(1px * (var(--preview-page-height) + var(--preview-padding)*2))",
+    overflow: "hidden",
+    fontSize: "4rem",
+    lineHeight: "10rem",
   },
-  {
-    id: 3,
-    name: "120×180-landscape",
-    width: 180,
-    height: 120,
-    ppi: 300,
-  },
-];
+});

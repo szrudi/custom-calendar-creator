@@ -1,6 +1,9 @@
 import React from "react";
 import { Box } from "@material-ui/core";
-import { makeStyles, Theme } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
+import { convertSize } from "../helpers/Globals";
+import { CalendarElementProps } from "../components/calendar";
+import { ContentElementProps } from "../components/Content";
 
 /**
  * asPageElement HOC: we can add positioning to Page Elements
@@ -11,20 +14,13 @@ import { makeStyles, Theme } from "@material-ui/core/styles";
  * @param componentName
  */
 
-const asPageElement = <P extends object, WP extends P & Partial<ElementPlacementProps>>(
+const asPageElement = <P extends object>(
   Component: { (props: P): Exclude<React.ReactNode, undefined>; displayName?: string },
   componentName = Component.displayName ?? Component.name
-): { (props: WP): JSX.Element; displayName: string } => {
-  function PageElement({
-    top = 0,
-    left = 0,
-    width = "auto",
-    height = "auto",
-    rotate = 0,
-    ...componentProps
-  }: WP) {
-    const classes = useStyles({ top, left, width, height, rotate });
-    return <Box className={classes.element}>{Component(componentProps as P)}</Box>;
+): { (props: P & PageElement): JSX.Element; displayName: string } => {
+  function PageElement({ placement, componentName, ...componentProps }: P & PageElement) {
+    const classes = useStyles({ ...placement });
+    return <Box className={classes.elementPlacement}>{Component(componentProps as P)}</Box>;
   }
 
   PageElement.displayName = `asPageElement(${componentName})`;
@@ -32,20 +28,28 @@ const asPageElement = <P extends object, WP extends P & Partial<ElementPlacement
   return PageElement;
 };
 
-export type ElementPlacementProps = Record<
-  "top" | "left" | "width" | "height" | "rotate",
-  number | string
->;
+const useStyles = makeStyles({
+  elementPlacement: (props: PageElement["placement"]) => {
+    const ppi = props.ppi ?? 300;
+    return {
+      position: "absolute",
+      outline: "1px solid", // for testing only
+      top: props.top ? convertSize(props.top, ppi) : 0,
+      left: props.left ? convertSize(props.left, ppi) : 0,
+      width: props.width ? convertSize(props.width, ppi) : "auto",
+      height: props.height ? convertSize(props.height, ppi) : "auto",
+      transform: props.rotate ? `rotate(${props.rotate}deg)` : "none",
+    };
+  },
+});
 
 export default asPageElement;
 
-const useStyles = makeStyles<Theme, ElementPlacementProps>({
-  element: {
-    position: "absolute",
-    top: (props) => props.top,
-    left: (props) => props.left,
-    width: (props) => props.width,
-    height: (props) => props.height,
-    transform: (props) => `rotate(${props.rotate}deg)`,
-  },
-});
+export type PageElement = {
+  placement: Partial<
+    Record<"rotate" | "ppi", number> & Record<"top" | "left" | "width" | "height", number | string>
+  >;
+  componentName: string;
+};
+
+export type PageElements = Array<CalendarElementProps | ContentElementProps>;

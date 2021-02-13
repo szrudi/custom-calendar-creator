@@ -2,39 +2,48 @@ import React from "react";
 import { eachDayOfInterval, eachWeekOfInterval, endOfWeek, getWeek, startOfWeek } from "date-fns";
 import { assertNever, daysOfWeek } from "../../helpers/Globals";
 import { Box } from "@material-ui/core";
-import asPageElement, { ElementPlacementProps } from "../../hoc/AsPageElement";
+import asPageElement, { PageElement } from "../../hoc/AsPageElement";
 import WeekHorizontal, { weekHorizontalNames } from "./types/WeekHorizontal";
 import MonthHorizontal, { monthHorizontalNames } from "./types/MonthHorizontal";
 
-const Calendar = (options: CalendarProps) => {
-  options = { ...options.locale?.options, ...options };
+const Calendar = (props: CalendarProps) => {
+  const calProps: CalendarProps = {
+    ...props,
+    options: { ...props.options.locale?.options, ...props.options },
+  };
+
   return (
-    <Box style={{ height: "auto" }} id={`${options.type}-calendar`}>
-      {getCalendar(options)}
+    <Box style={{ height: "auto"}} id={`${calProps.type}-calendar`}>
+      {getCalendar(calProps)}
     </Box>
   );
 };
 
 export default asPageElement(Calendar);
-
-type calendarTypes = monthHorizontalNames | weekHorizontalNames;
+export type CalendarElementProps = CalendarProps & PageElement;
 
 type CalendarProps = {
+  componentName?: "Calendar";
   /** All implemented Calendar types */
-  type: calendarTypes;
+  type: monthHorizontalNames | weekHorizontalNames;
+  variant: string;
   /** The calendar should start with this date */
   firstDay: Date;
-  weekStartsOn?: daysOfWeek;
-  firstWeekContainsDate?: dateOptions["firstWeekContainsDate"];
-  locale?: Locale;
-  showGrid?: boolean;
-  showWeekNumbers?: boolean;
-  showNameDays?: boolean;
-  showHolidays?: boolean;
-  showCustomEvents?: boolean;
-  showWeekends?: boolean;
+  options: Partial<{
+    locale: Locale;
+    weekStartsOn: daysOfWeek;
+    firstWeekContainsDate: dateOptions["firstWeekContainsDate"];
+    showGrid: boolean;
+    showWeekNumbers: boolean;
+    showNameDays: boolean;
+    showHolidays: boolean;
+    showCustomEvents: boolean;
+    showWeekends: boolean;
+  }>;
 };
-export type CalendarElementProps = CalendarProps & Partial<ElementPlacementProps>;
+type getWeekOptions = Parameters<typeof getWeek>[1];
+type dateOptions = NonNullable<getWeekOptions>;
+type daysByWeek = Array<Array<Date>>;
 
 const getCalendar = (options: CalendarProps): React.ReactNode => {
   switch (options.type) {
@@ -48,10 +57,6 @@ const getCalendar = (options: CalendarProps): React.ReactNode => {
       return assertNever(options.type);
   }
 };
-
-type getWeekOptions = Parameters<typeof getWeek>[1];
-type dateOptions = NonNullable<getWeekOptions>;
-type daysByWeek = Array<Array<Date>>;
 
 export const getDaysOfWeeks = (
   { start, end }: Interval,
@@ -85,10 +90,10 @@ function getFirstWeekContainsDate(
 }
 
 export function warnAboutNotImplementedOptions(
-  options: CalendarProps,
+  props: CalendarProps,
   notImplementedOptions: string[]
 ) {
-  Object.keys(options).forEach((option) => {
+  Object.keys(props.options).forEach((option) => {
     if (notImplementedOptions.includes(option)) {
       console.warn(`Calendar option ${option} not yet implemented!`);
     }
