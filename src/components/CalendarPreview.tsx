@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import Page, { PageSize } from "./Page";
 import Calendar, { CalendarElementProps } from "./calendar";
 import { useLocale } from "../hooks/useLocale";
@@ -16,9 +16,10 @@ const CalendarPreview = () => {
   const [locale] = useLocale();
   const classes = useStyles({ pageSize });
   useLayoutEffect(trackWindowSizeChange, []);
+  useEffect(enableZoom, [locale]); // TODO hack
 
   return !locale ? null : (
-    <Container className={clsx(classes.pageScaleVariables, classes.previewWrapper)}>
+    <Container className={clsx(classes.pageScaleVariables, classes.previewWrapper, 'page-zoom-variables')}>
       <Page pageSize={pageSize}>
         {pageTemplate.elements.map((element) => getPageElement(element))}
       </Page>
@@ -38,6 +39,46 @@ function trackWindowSizeChange() {
   setInnerSize();
   window.addEventListener("resize", setInnerSize);
   return () => window.removeEventListener("resize", setInnerSize);
+}
+
+function enableZoom() {
+  let resetTimer: number;
+  const setZoom: EventListener = (e) => {
+    clearTimeout(resetTimer); // debounce resetZoom effect
+    const wrapper = (e.currentTarget ?? e.target) as HTMLElement;
+    const wrapperRect = wrapper.getBoundingClientRect();
+    const cursor = (e as TouchEvent).touches?.[0] || e;
+    setZoomVariables(wrapper, cursor.clientX - wrapperRect.x, cursor.clientY - wrapperRect.y, 0.7);
+  };
+  const setZoomVariables = (element: HTMLElement | null = null, x = 0, y = 0, zoom = 0) => {
+    element = element || document.querySelector(".page-zoom-variables");
+    if (!element) {
+      return;
+    }
+    element.style.setProperty("--mouse-x", x.toString());
+    element.style.setProperty("--mouse-y", y.toString());
+    element.style.setProperty("--preview-zoom", zoom.toString());
+  };
+
+  // https://css-tricks.com/updating-a-css-variable-with-javascript/
+  const wrapper: HTMLElement | null = document.querySelector(".page-zoom-variables");
+  if (!wrapper) return;
+  ["mousemove", "touchmove"].forEach((type) => {
+    wrapper.addEventListener(type, setZoom);
+  });
+
+  ["mouseout", "touchend"].forEach((type) =>
+    wrapper.addEventListener(type, () => {
+      // this would cause a flicker on mouseout when
+      // moving out of an inner element
+      // it could be also solved with e.relatedTarget check
+      if (type === "mouseout") {
+        resetTimer = setTimeout(setZoomVariables, 100);
+      } else {
+        setZoomVariables();
+      }
+    })
+  );
 }
 
 const getPageElement = (props: PageElement): JSX.Element => {
@@ -72,7 +113,6 @@ const useStyles = makeStyles<Theme, { pageSize: PageSize }>({
     "--preview-page-width": "calc(var(--preview-page-height) / var(--aspect-ratio))",
 
     "--page-scale": "calc(var(--preview-page-height) / var(--full-page-height))",
-    "--preview-scale": "var(--page-scale)",
   },
   previewWrapper: {
     margin: "0 20px",
