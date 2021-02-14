@@ -3,6 +3,10 @@
 A React/TypeScript/Nodejs/NextJs/...(?) rework of my 9+ years old custom calendar app as
 pet project.
 
+You can check out the current state hosted on Netlify:
+
+https://custom-calendar-creator.netlify.app/editor
+
 The goal of the project is to learn as much as I can about the mentioned technologies. So
 I want to be sure, that I understand and can reason about every line of code that is on
 the master branch. To achieve this I've read and watched a lot of blogposts, tutorials,
