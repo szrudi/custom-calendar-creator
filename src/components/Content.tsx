@@ -1,5 +1,5 @@
 import React from "react";
-import asPageElement, { PageElement } from "../hoc/AsPageElement";
+import asPageElement, { PageElementProps } from "../hoc/AsPageElement";
 import { layouts } from "../helpers/Globals";
 
 const Content = (options: ContentProps) => {
@@ -13,5 +13,5 @@ type ContentProps = {
   layout: number;
 };
 
-export type ContentElementProps = ContentProps & PageElement;
+export type ContentElementProps = ContentProps & PageElementProps;
 export default asPageElement(Content);

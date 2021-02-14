@@ -1,4 +1,4 @@
-import { PageElement, PageElements } from "../hoc/AsPageElement";
+import { PageElementProps, PageElements } from "../hoc/AsPageElement";
 import { PageSize } from "../components/Page";
 
 export enum daysOfWeek {
@@ -112,7 +112,7 @@ export const layouts = [
           width: "100%",
           height: "100%",
           rotate: 0,
-        } as PageElement["placement"],
+        } as PageElementProps["placement"],
       },
     ],
     textBoxes: [
@@ -126,7 +126,7 @@ export const layouts = [
           width: "100%",
           height: "10%",
           rotate: 0,
-        } as PageElement["placement"],
+        } as PageElementProps["placement"],
       },
     ],
   },

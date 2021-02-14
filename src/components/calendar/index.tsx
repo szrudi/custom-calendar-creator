@@ -2,7 +2,7 @@ import React from "react";
 import { eachDayOfInterval, eachWeekOfInterval, endOfWeek, getWeek, startOfWeek } from "date-fns";
 import { assertNever, daysOfWeek } from "../../helpers/Globals";
 import { Box } from "@material-ui/core";
-import asPageElement, { PageElement } from "../../hoc/AsPageElement";
+import asPageElement, { PageElementProps } from "../../hoc/AsPageElement";
 import WeekHorizontal, { weekHorizontalNames } from "./types/WeekHorizontal";
 import MonthHorizontal, { monthHorizontalNames } from "./types/MonthHorizontal";
 
@@ -20,7 +20,7 @@ const Calendar = (props: CalendarProps) => {
 };
 
 export default asPageElement(Calendar);
-export type CalendarElementProps = CalendarProps & PageElement;
+export type CalendarElementProps = CalendarProps & PageElementProps;
 
 type CalendarProps = {
   componentName?: "Calendar";

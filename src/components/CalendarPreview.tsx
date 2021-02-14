@@ -6,7 +6,7 @@ import { makeStyles, Theme } from "@material-ui/core/styles";
 import clsx from "clsx";
 import { convertSize, pageSizes, pageTemplates } from "../helpers/Globals";
 import { Container } from "@material-ui/core";
-import { PageElement } from "../hoc/AsPageElement";
+import { PageElementProps } from "../hoc/AsPageElement";
 import Content, { ContentElementProps } from "./Content";
 
 const CalendarPreview = () => {
@@ -81,7 +81,7 @@ function enableZoom() {
   );
 }
 
-const getPageElement = (props: PageElement): JSX.Element => {
+const getPageElement = (props: PageElementProps): JSX.Element => {
   switch (props.componentName) {
     case "Calendar":
       return <Calendar {...(props as CalendarElementProps)} key={props.componentName} />;

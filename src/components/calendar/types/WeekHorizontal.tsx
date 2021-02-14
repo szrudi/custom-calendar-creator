@@ -4,7 +4,7 @@ import Typography from "@material-ui/core/Typography";
 import { endOfWeek, format, getDay, getWeek, getYear, isSameMonth, startOfWeek } from "date-fns";
 import Day from "../Day";
 import { CalendarElementProps, getDaysOfWeeks, warnAboutNotImplementedOptions } from "../index";
-import { PageElement } from "../../../hoc/AsPageElement";
+import { PageElementProps } from "../../../hoc/AsPageElement";
 
 const notImplementedOptions = [
   "showGrid",
@@ -15,7 +15,7 @@ const notImplementedOptions = [
   "showWeekends",
 ];
 
-const WeekHorizontal = (props: Omit<CalendarElementProps, keyof PageElement>) => {
+const WeekHorizontal = (props: Omit<CalendarElementProps, keyof PageElementProps>) => {
   warnAboutNotImplementedOptions(props, notImplementedOptions);
   const daysOfWeekInterval = {
     start: startOfWeek(props.firstDay, props.options),

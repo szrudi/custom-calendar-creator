@@ -17,8 +17,8 @@ import { ContentElementProps } from "../components/Content";
 const asPageElement = <P extends object>(
   Component: { (props: P): Exclude<React.ReactNode, undefined>; displayName?: string },
   componentName = Component.displayName ?? Component.name
-): { (props: P & PageElement): JSX.Element; displayName: string } => {
-  function PageElement({ placement, componentName, ...componentProps }: P & PageElement) {
+): { (props: P & PageElementProps): JSX.Element; displayName: string } => {
+  function PageElement({ placement, componentName, ...componentProps }: P & PageElementProps) {
     const classes = useStyles({ ...placement });
     return <Box className={classes.elementPlacement}>{Component(componentProps as P)}</Box>;
   }
@@ -29,7 +29,7 @@ const asPageElement = <P extends object>(
 };
 
 const useStyles = makeStyles({
-  elementPlacement: (props: PageElement["placement"]) => {
+  elementPlacement: (props: PageElementProps["placement"]) => {
     const ppi = props.ppi ?? 300;
     return {
       position: "absolute",
@@ -45,7 +45,7 @@ const useStyles = makeStyles({
 
 export default asPageElement;
 
-export type PageElement = {
+export type PageElementProps = {
   placement: Partial<
     Record<"rotate" | "ppi", number> & Record<"top" | "left" | "width" | "height", number | string>
   >;
