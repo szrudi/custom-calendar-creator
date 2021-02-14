@@ -59,7 +59,6 @@ const WeekHorizontal = (props: Omit<CalendarElementProps, keyof PageElementProps
 };
 
 export type weekHorizontalNames = "week" | "week-horizontal";
-
 export default WeekHorizontal;
 
 const useStyles = makeStyles((theme: Theme) =>

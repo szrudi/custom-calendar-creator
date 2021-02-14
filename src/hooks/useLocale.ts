@@ -10,16 +10,7 @@ export const useLocale = () => {
       import("get-user-locale")
         .then(({ getUserLocale }) => getUserLocale())
         .then((userLocale) => {
-          let locale = userLocale;
-          // console.log("from user", locale);
-          if (!dateFnsLocales.includes(locale)) {
-            locale = locale.split("-")[0];
-            // console.log("maybe just the first part?", locale);
-            if (!dateFnsLocales.includes(locale)) {
-              locale = dateFnsLocales.find((l) => l.startsWith(locale as string)) ?? "en-GB";
-              // console.log("maybe the locale starts with this? or the default...", locale);
-            }
-          }
+          let locale = convertToDateFnsLocaleName(userLocale);
           return import(`date-fns/locale/${locale}`);
         })
         .then(({ default: locale }) => setLocale(locale));
@@ -28,6 +19,21 @@ export const useLocale = () => {
 
   return [locale];
 };
+
+function convertToDateFnsLocaleName(userLocale: string): string {
+  let locale: string | undefined = userLocale;
+  if (dateFnsLocales.includes(locale)) {
+    return locale;
+  }
+
+  locale = locale.split("-")[0];
+  if (dateFnsLocales.includes(locale)) {
+    return locale;
+  }
+
+  locale = dateFnsLocales.find((l) => l.startsWith(locale as string));
+  return locale ?? "en-GB";
+}
 
 const dateFnsLocales = [
   "af",

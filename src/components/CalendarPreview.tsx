@@ -81,7 +81,7 @@ function enableZoom() {
   );
 }
 
-const getPageElement = (props: PageElementProps): JSX.Element => {
+function getPageElement(props: PageElementProps): JSX.Element {
   switch (props.componentName) {
     case "Calendar":
       return <Calendar {...(props as CalendarElementProps)} key={props.componentName} />;
@@ -90,7 +90,7 @@ const getPageElement = (props: PageElementProps): JSX.Element => {
     default:
       return <></>;
   }
-};
+}
 
 const useStyles = makeStyles<Theme, { pageSize: PageSize }>({
   "@global": {

@@ -45,7 +45,7 @@ type getWeekOptions = Parameters<typeof getWeek>[1];
 type dateOptions = NonNullable<getWeekOptions>;
 type daysByWeek = Array<Array<Date>>;
 
-const getCalendar = (options: CalendarProps): React.ReactNode => {
+function getCalendar(options: CalendarProps): React.ReactNode {
   switch (options.type) {
     case "month":
     case "month-horizontal":
@@ -56,12 +56,12 @@ const getCalendar = (options: CalendarProps): React.ReactNode => {
     default:
       return assertNever(options.type);
   }
-};
+}
 
-export const getDaysOfWeeks = (
+export function getDaysOfWeeks(
   { start, end }: Interval,
   { weekStartsOn, firstWeekContainsDate = getFirstWeekContainsDate(weekStartsOn) }: dateOptions
-): daysByWeek => {
+): daysByWeek {
   const options = { weekStartsOn, firstWeekContainsDate };
   const interval = {
     start: startOfWeek(start, options),
@@ -71,7 +71,7 @@ export const getDaysOfWeeks = (
   return eachWeekOfInterval(interval, options).map((weekStart) =>
     eachDayOfInterval({ start: weekStart, end: endOfWeek(weekStart, options) })
   );
-};
+}
 
 function getFirstWeekContainsDate(
   weekStartsOn: dateOptions["weekStartsOn"]
@@ -92,7 +92,7 @@ function getFirstWeekContainsDate(
 export function warnAboutNotImplementedOptions(
   props: CalendarProps,
   notImplementedOptions: string[]
-) {
+): void {
   Object.keys(props.options).forEach((option) => {
     if (notImplementedOptions.includes(option)) {
       console.warn(`Calendar option ${option} not yet implemented!`);

@@ -15,9 +15,9 @@ export function assertNever(x: never): never {
   throw new Error("Unexpected object: " + x);
 }
 
-export const convertSize = (value: number | string, ppi: number) => {
+export function convertSize(value: number | string, ppi: number) {
   return typeof value === "string" ? value : Math.round((ppi * value) / 25.4);
-};
+}
 
 //#region Demo data below, it will come from somewhere later on...
 // See /docs/dataStructurePlans.md for details
