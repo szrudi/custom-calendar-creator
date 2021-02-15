@@ -1,11 +1,13 @@
 # Data structure plans
 
-The concepts mentioned here are detailed in the [mainConcepts.md](./mainConcepts.md).
+The concepts mentioned here are detailed in the
+[Custom Photo Calendar Creator Planning](https://docs.google.com/document/d/1GidvJzmwesiGde0cEcd0WYWJWms2kcxGVfmyWsqoIC4/edit#heading=h.lg6xawe598v4)
+Google Drive document.
 
 ## Printable calendar
 
 A finished calendar that contains every detail, the user added picture, texts, selected
-images... etc. In structure it is similar to the Calendar Template, so see that for
+images... etc. In structure, it is similar to the Calendar Template, so see that for
 details.
 
 ```json
