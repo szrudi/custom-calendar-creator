@@ -19,10 +19,14 @@ const CalendarPreview = () => {
   useEffect(enableZoom, [locale]); // TODO hack
 
   return !locale ? null : (
-    <Container className={clsx(classes.pageScaleVariables, classes.previewWrapper, 'page-zoom-variables')}>
-      <Page pageSize={pageSize}>
-        {pageTemplate.elements.map((element) => getPageElement(element))}
-      </Page>
+    <Container
+      className={clsx(classes.pageScaleVariables, classes.previewWrapper, "page-zoom-variables")}
+    >
+      <div className={clsx(classes.page, classes.pageScale, classes.pageZoom)}>
+        <Page pageSize={pageSize}>
+          {pageTemplate.elements.map((element) => getPageElement(element))}
+        </Page>
+      </div>
     </Container>
   );
 };
@@ -125,5 +129,25 @@ const useStyles = makeStyles<Theme, { pageSize: PageSize }>({
     overflow: "hidden",
     fontSize: "4rem",
     lineHeight: "10rem",
+  },
+
+  page: {
+    position: "relative",
+    width: "calc(1px * var(--full-page-width))",
+    height: "calc(1px * var(--full-page-height))",
+  },
+  pageScale: {
+    transformOrigin: "top left",
+    transform: "scale(var(--preview-scale))",
+    top: "calc(1px * var(--preview-top, 0))",
+    left: "calc(1px * var(--preview-left, 0))",
+  },
+  pageZoom: {
+    "--preview-scale": "max(var(--page-scale), var(--preview-zoom))",
+    "--zoom-scale": "calc(var(--page-scale) / var(--preview-zoom))",
+    "--preview-top":
+      "calc((var(--mouse-y) - var(--preview-padding)) * (-1 / var(--zoom-scale) + 1))",
+    "--preview-left":
+      "calc((var(--mouse-x) - var(--preview-padding)) * (-1 / var(--zoom-scale) + 1))",
   },
 });
