@@ -48,6 +48,7 @@ function enableZoom(pageZoomClass: string) {
 
   ["mousemove", "touchmove"].forEach((type) => {
     zoomElement.addEventListener(type, (e) => {
+      e.preventDefault();
       clearTimeout(resetTimer);
       const zoomRect = zoomElement.getBoundingClientRect();
       const cursor = (e as TouchEvent).touches?.[0] || e;
@@ -57,6 +58,7 @@ function enableZoom(pageZoomClass: string) {
 
   ["mouseout", "touchend"].forEach((type) =>
     zoomElement.addEventListener(type, (e) => {
+      e.preventDefault();
       // This would cause a flicker on mouseout when moving out of an inner element
       // It could be also solved with target/relatedTarget inspection
       resetTimer = setTimeout(() => setZoomVariables(zoomElement), 100);
