@@ -113,6 +113,7 @@ const useStyles = makeStyles<Theme, { pageSize: PageSize }>({
     "--preview-page-width": "calc(var(--preview-page-height) / var(--aspect-ratio))",
 
     "--page-scale": "calc(var(--preview-page-height) / var(--full-page-height))",
+    "--preview-scale": "var(--page-scale);",
   },
   previewWrapper: {
     margin: "0 20px",
