@@ -39,31 +39,22 @@ function trackWindowSizeChange() {
 }
 
 function enableZoom(pageZoomClass: string) {
-  let resetTimer: NodeJS.Timeout;
   const zoomElement: HTMLElement | null = document.querySelector(`.${pageZoomClass}`);
   if (!zoomElement) {
     console.warn("Failed to enable zoom on CalendarPreview");
     return;
   }
 
-  ["mousemove", "touchmove"].forEach((type) => {
-    zoomElement.addEventListener(type, (e) => {
-      e.preventDefault();
-      clearTimeout(resetTimer);
-      const zoomRect = zoomElement.getBoundingClientRect();
-      const cursor = (e as TouchEvent).touches?.[0] || e;
-      setZoomVariables(zoomElement, cursor.clientX - zoomRect.x, cursor.clientY - zoomRect.y, 0.7);
-    });
+  zoomElement.addEventListener("pointermove", (e) => {
+    if (!e.isPrimary) return;
+
+    const zoomRect = zoomElement.getBoundingClientRect();
+    setZoomVariables(zoomElement, e.clientX - zoomRect.x, e.clientY - zoomRect.y, 0.7);
   });
 
-  ["mouseout", "touchend"].forEach((type) =>
-    zoomElement.addEventListener(type, (e) => {
-      e.preventDefault();
-      // This would cause a flicker on mouseout when moving out of an inner element
-      // It could be also solved with target/relatedTarget inspection
-      resetTimer = setTimeout(() => setZoomVariables(zoomElement), 100);
-    })
-  );
+  zoomElement.addEventListener("pointerleave", () => {
+    setZoomVariables(zoomElement);
+  });
 }
 
 function setZoomVariables(element: HTMLElement, x = 0, y = 0, zoom = 0) {
@@ -117,6 +108,7 @@ const useStyles = makeStyles<Theme, { pageSize: PageSize }>({
     "--preview-scale": "var(--page-scale);",
   },
   zoomVariables: {
+    touchAction: "none",
     "--mouse-x": 0,
     "--mouse-y": 0,
     "--preview-zoom": 0,
