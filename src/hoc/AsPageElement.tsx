@@ -1,7 +1,6 @@
 import React from "react";
 import { Box } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { convertSize } from "../helpers/Globals";
 import { CalendarElementProps } from "../components/calendar";
 import { ContentElementProps } from "../components/Content";
 
@@ -30,14 +29,13 @@ const asPageElement = <P extends object>(
 
 const useStyles = makeStyles({
   elementPlacement: (props: PageElementProps["placement"]) => {
-    const ppi = props.ppi ?? 300;
     return {
       position: "absolute",
       outline: "1px solid", // for testing only
-      top: props.top ? convertSize(props.top, ppi) : 0,
-      left: props.left ? convertSize(props.left, ppi) : 0,
-      width: props.width ? convertSize(props.width, ppi) : "auto",
-      height: props.height ? convertSize(props.height, ppi) : "auto",
+      top: props.top ?? 0,
+      left: props.left ?? 0,
+      width: props.width ?? "auto",
+      height: props.height ?? "auto",
       transform: props.rotate ? `rotate(${props.rotate}deg)` : "none",
     };
   },
@@ -47,7 +45,7 @@ export default asPageElement;
 
 export type PageElementProps = {
   placement: Partial<
-    Record<"rotate" | "ppi", number> & Record<"top" | "left" | "width" | "height", number | string>
+    { rotate?: number } & Record<"top" | "left" | "width" | "height", number | string>
   >;
   componentName: string;
 };

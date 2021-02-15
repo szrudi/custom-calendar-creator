@@ -1,13 +1,15 @@
 import React, { useEffect, useLayoutEffect } from "react";
-import Page, { PageSize } from "./Page";
+import Page from "./Page";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import clsx from "clsx";
-import { convertSize, pageSizes, pageTemplates } from "../helpers/Globals";
+import { pageSizes, pageTemplates } from "../helpers/Globals";
 import { Box, Container } from "@material-ui/core";
+import PageSize from "../helpers/PageSize";
 
 const CalendarPreview = () => {
   let pageTemplate = pageTemplates[0];
-  let pageSize = pageSizes.find((ps) => ps.id === pageTemplate.defaultPageSize) ?? pageSizes[0];
+  let pageSizeData = pageSizes.find((ps) => ps.id === pageTemplate.defaultPageSize) ?? pageSizes[0];
+  let pageSize = new PageSize(pageSizeData);
 
   const classes = useStyles({ pageSize });
   useLayoutEffect(trackWindowSizeChange, []);
@@ -95,8 +97,8 @@ const useStyles = makeStyles<Theme, { pageSize: PageSize }>({
     "--preview-padding": 10,
     "--other-content-height": "calc(120 + var(--preview-padding)*2)",
 
-    "--full-page-width": ({ pageSize: ps }) => convertSize(ps.width, ps.ppi),
-    "--full-page-height": ({ pageSize: ps }) => convertSize(ps.height, ps.ppi),
+    "--full-page-width": ({ pageSize }) => pageSize.widthPx,
+    "--full-page-height": ({ pageSize }) => pageSize.heightPx,
 
     "--aspect-ratio": "calc(var(--full-page-height) / var(--full-page-width))",
     "--smaller-side": "calc(min(var(--inner-height),var(--inner-width)*var(--aspect-ratio)))",

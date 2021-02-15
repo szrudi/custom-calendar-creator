@@ -1,5 +1,6 @@
 import { PageElementProps } from "../hoc/AsPageElement";
-import { PageSize, PageTemplate } from "../components/Page";
+import { PageTemplate } from "../components/Page";
+import { PageSizeData } from "./PageSize";
 
 export enum daysOfWeek {
   Sunday,
@@ -13,10 +14,6 @@ export enum daysOfWeek {
 
 export function assertNever(x: never): never {
   throw new Error("Unexpected object: " + x);
-}
-
-export function convertSize(value: number | string, ppi: number) {
-  return typeof value === "string" ? value : Math.round((ppi * value) / 25.4);
 }
 
 //#region Demo data below, it will come from somewhere later on...
@@ -69,7 +66,7 @@ export const pageTemplates: PageTemplate[] = [
   },
 ];
 
-export const pageSizes: PageSize[] = [
+export const pageSizes: PageSizeData[] = [
   {
     id: 1,
     name: "A4-vertical",
