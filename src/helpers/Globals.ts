@@ -1,5 +1,5 @@
-import { PageElementProps, PageElements } from "../hoc/AsPageElement";
-import { PageSize } from "../components/Page";
+import { PageElementProps } from "../hoc/AsPageElement";
+import { PageSize, PageTemplate } from "../components/Page";
 
 export enum daysOfWeek {
   Sunday,
@@ -21,12 +21,6 @@ export function convertSize(value: number | string, ppi: number) {
 
 //#region Demo data below, it will come from somewhere later on...
 // See /docs/dataStructurePlans.md for details
-type PageTemplate = {
-  id: number;
-  defaultPageSize: number;
-  possiblePageSizes: number[];
-  elements: PageElements;
-};
 export const pageTemplates: PageTemplate[] = [
   {
     id: 1,
