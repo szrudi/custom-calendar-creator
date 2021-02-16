@@ -7,9 +7,11 @@ import { Box, Container } from "@material-ui/core";
 import PageSize from "../helpers/PageSize";
 
 const CalendarPreview = () => {
+  //#region Test data, these will come from somewhere later on, maybe props?
   let pageTemplate = pageTemplates[0];
   let pageSizeData = pageSizes.find((ps) => ps.id === pageTemplate.defaultPageSize) ?? pageSizes[0];
   let pageSize = new PageSize(pageSizeData);
+  //#endregion
 
   const classes = useStyles({ pageSize });
   useLayoutEffect(trackWindowSizeChange, []);
@@ -29,15 +31,15 @@ const CalendarPreview = () => {
 export default CalendarPreview;
 
 function trackWindowSizeChange() {
+  window.addEventListener("resize", setInnerSize);
+  setInnerSize();
+  return () => window.removeEventListener("resize", setInnerSize);
+
   function setInnerSize() {
     const root = document.documentElement;
-    root.style.setProperty("--inner-width", `${window.innerWidth}`);
-    root.style.setProperty("--inner-height", `${window.innerHeight}`);
+    root.style.setProperty("--inner-width", `${root.clientWidth}`);
+    root.style.setProperty("--inner-height", `${root.clientHeight}`);
   }
-
-  setInnerSize();
-  window.addEventListener("resize", setInnerSize);
-  return () => window.removeEventListener("resize", setInnerSize);
 }
 
 function enableZoom(pageZoomClass: string) {
@@ -47,23 +49,33 @@ function enableZoom(pageZoomClass: string) {
     return;
   }
 
-  zoomElement.addEventListener("pointermove", (e) => {
+  zoomElement.addEventListener("pointermove", handlePointerMove);
+  zoomElement.addEventListener("pointerleave", handlePointerLeave);
+
+  return () => {
+    zoomElement.removeEventListener("pointermove", handlePointerMove);
+    zoomElement.removeEventListener("pointerleave", handlePointerLeave);
+  };
+
+  function handlePointerMove(e: PointerEvent) {
     if (!e.isPrimary) return;
 
-    const zoomRect = zoomElement.getBoundingClientRect();
-    setZoomVariables(zoomElement, e.clientX - zoomRect.x, e.clientY - zoomRect.y, 0.7);
-  });
+    const currentTarget = e.currentTarget as HTMLElement;
+    const zoomRect = currentTarget.getBoundingClientRect();
+    setZoomVariables(currentTarget, e.clientX - zoomRect.x, e.clientY - zoomRect.y, 0.7);
+  }
 
-  zoomElement.addEventListener("pointerleave", () => {
-    setZoomVariables(zoomElement);
-  });
-}
+  function handlePointerLeave(e: PointerEvent) {
+    const currentTarget = e.currentTarget as HTMLElement;
+    setZoomVariables(currentTarget);
+  }
 
-function setZoomVariables(element: HTMLElement, x = 0, y = 0, zoom = 0) {
-  // https://css-tricks.com/updating-a-css-variable-with-javascript/
-  element.style.setProperty("--mouse-x", x.toString());
-  element.style.setProperty("--mouse-y", y.toString());
-  element.style.setProperty("--preview-zoom", zoom.toString());
+  function setZoomVariables(element: HTMLElement, x = 0, y = 0, zoom = 0) {
+    // https://css-tricks.com/updating-a-css-variable-with-javascript/
+    element.style.setProperty("--mouse-x", x.toString());
+    element.style.setProperty("--mouse-y", y.toString());
+    element.style.setProperty("--preview-zoom", zoom.toString());
+  }
 }
 
 const useStyles = makeStyles<Theme, { pageSize: PageSize }>({
@@ -71,6 +83,8 @@ const useStyles = makeStyles<Theme, { pageSize: PageSize }>({
     ":root": {
       "--inner-width": 800,
       "--inner-height": 800,
+      "--rem-value": 20,
+      fontSize: "calc(1px * var(--rem-size))",
     },
   },
   previewWrapper: {
@@ -95,7 +109,7 @@ const useStyles = makeStyles<Theme, { pageSize: PageSize }>({
   },
   scaleVariables: {
     "--preview-padding": 10,
-    "--other-content-height": "calc(120 + var(--preview-padding)*2)",
+    "--other-content-height": "calc(4.6 * var(--rem-value) + var(--preview-padding)*2)",
 
     "--full-page-width": ({ pageSize }) => pageSize.widthPx,
     "--full-page-height": ({ pageSize }) => pageSize.heightPx,
