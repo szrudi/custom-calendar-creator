@@ -5,7 +5,6 @@ import { Box } from "@material-ui/core";
 
 const Day = ({ date }: { date: Date }) => {
   const classes = useStyles();
-
   return <Box className={classes.dayElement}>{getDate(date)}</Box>;
 };
 
@@ -23,6 +22,5 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
-
 
 export default Day;

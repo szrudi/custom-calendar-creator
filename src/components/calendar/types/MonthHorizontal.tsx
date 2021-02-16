@@ -4,7 +4,7 @@ import Typography from "@material-ui/core/Typography";
 import { endOfMonth, format, getDay, getWeek, getYear, isSameMonth, startOfMonth } from "date-fns";
 import Day from "../Day";
 import { CalendarElementProps, getDaysOfWeeks, warnAboutNotImplementedOptions } from "../index";
-import { ElementPlacementProps } from "../../../hoc/AsPageElement";
+import { PageElementProps } from "../../../hoc/AsPageElement";
 
 const notImplementedOptions = [
   "showGrid",
@@ -15,15 +15,15 @@ const notImplementedOptions = [
   "showWeekends",
 ];
 
-const MonthHorizontal = (options: Omit<CalendarElementProps, keyof ElementPlacementProps>) => {
-  warnAboutNotImplementedOptions(options, notImplementedOptions);
+const MonthHorizontal = (props: Omit<CalendarElementProps, keyof PageElementProps>) => {
+  warnAboutNotImplementedOptions(props, notImplementedOptions);
   const daysOfMonthInterval = {
-    start: startOfMonth(options.firstDay),
-    end: endOfMonth(options.firstDay),
+    start: startOfMonth(props.firstDay),
+    end: endOfMonth(props.firstDay),
   };
-  const daysOfWeeks = getDaysOfWeeks(daysOfMonthInterval, options);
+  const daysOfWeeks = getDaysOfWeeks(daysOfMonthInterval, props.options);
   const year = getYear(daysOfMonthInterval.start);
-  const monthName = format(daysOfMonthInterval.start, "LLLL", options);
+  const monthName = format(daysOfMonthInterval.start, "LLLL", props.options);
 
   const classes = useStyles();
 
@@ -37,14 +37,14 @@ const MonthHorizontal = (options: Omit<CalendarElementProps, keyof ElementPlacem
           <tr>
             <th>{/* week numbers column */}</th>
             {daysOfWeeks[0].map((day) => (
-              <th key={getDay(day)}>{format(day, "EEE", options)}</th>
+              <th key={getDay(day)}>{format(day, "EEE", props.options)}</th>
             ))}
           </tr>
         </thead>
         <tbody>
           {daysOfWeeks.map((week) => (
-            <tr key={`${year}-${getWeek(week[0], options)}`}>
-              <th>{getWeek(week[0], options)}</th>
+            <tr key={`${year}-${getWeek(week[0], props.options)}`}>
+              <th>{getWeek(week[0], props.options)}</th>
               {week.map((day) => (
                 <td key={getDay(day)}>
                   {isSameMonth(day, daysOfMonthInterval.start) && <Day date={day} />}
@@ -59,7 +59,6 @@ const MonthHorizontal = (options: Omit<CalendarElementProps, keyof ElementPlacem
 };
 
 export type monthHorizontalNames = "month" | "month-horizontal";
-
 export default MonthHorizontal;
 
 const useStyles = makeStyles((theme: Theme) =>

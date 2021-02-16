@@ -1,66 +1,66 @@
 import React from "react";
-import { Box, Container, makeStyles } from "@material-ui/core";
+import { Box, makeStyles } from "@material-ui/core";
+import { Theme } from "@material-ui/core/styles";
+import { PageElementProps, PageElements } from "../hoc/AsPageElement";
+import Calendar, { CalendarElementProps } from "./calendar";
+import Content, { ContentElementProps } from "./Content";
+import { useLocale } from "../hooks/useLocale";
+import PageSize from "../helpers/PageSize";
 
 /**
  * Fixed aspect ratio Page component.
  *
- * Thanks [jessepinho](https://github.com/jessepinho) for the inspiration in your
- * [blogpost](https://medium.com/bleeding-edge/enforcing-an-aspect-ratio-on-an-html-element-in-react-and-css-27a13241c3d4).
- *
  * @param {PageProps} props
  */
-const Page = ({ children, width, height, dpi = 300 }: PageProps) => {
-  const aspectRatio = Math.round((width / height) * 1000) / 1000;
-  const isPortrait = aspectRatio <= 1;
-  const scale = 0.9;
-  const unit = isPortrait ? "vh" : "vw";
-  const PageCss: PageCss = {
-    widthPercent: (isPortrait ? aspectRatio : 1) * 100 * scale + unit,
-    heightPercent: (isPortrait ? 1 : 1 / aspectRatio) * 100 * scale + unit,
-  };
-  const classes = useStyles(PageCss);
+const Page = ({ pageTemplate, pageSize }: PageProps) => {
+  const [locale] = useLocale();
+  const classes = useStyles(pageSize);
 
-  return (
-    <Container className={classes.outerWrapper}>
-      <div className={classes.innerWrapper}>
-        <Box bgcolor="info.main" className={classes.page}>
-          {children}
-        </Box>
-      </div>
-    </Container>
+  return !locale ? null : (
+    <Box className={classes.page}>
+      {pageTemplate.elements.map((element) => getPageElement(element, pageSize))}
+    </Box>
   );
 };
 
-const useStyles = makeStyles({
-  outerWrapper: {
-    position: "relative",
-    width: (props: PageCss) => props.widthPercent,
-    height: 0,
-    paddingBottom: (props: PageCss) => props.heightPercent,
-  },
-  innerWrapper: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-  },
+const useStyles = makeStyles<Theme, PageSize>((theme: Theme) => ({
   page: {
-    width: "100%",
-    height: "100%",
+    width: (pageSize) => pageSize.widthPx,
+    height: (pageSize) => pageSize.heightPx,
+    backgroundColor: theme.palette.info.main,
+    fontSize: "4rem",
+    lineHeight: "10rem"
   },
-});
+}));
 
-type PageProps = {
-  children?: any;
-  width: number;
-  height: number;
-  dpi?: 150 | 300 | 600;
+export type PageTemplate = {
+  id: number;
+  defaultPageSize: number;
+  possiblePageSizes: number[];
+  elements: PageElements;
 };
 
-type PageCss = {
-  widthPercent: string;
-  heightPercent: string;
+type PageProps = {
+  children?: JSX.Element[] | JSX.Element;
+
+  pageSize: PageSize;
+  pageTemplate: PageTemplate;
 };
 
 export default Page;
+
+function getPageElement(props: PageElementProps, pageSize: PageSize): JSX.Element {
+  const propsOnPage: PageElementProps = {
+    ...props,
+    placement: pageSize.convertElementPlacementToPage(props.placement),
+  };
+
+  switch (props.componentName) {
+    case "Calendar":
+      return <Calendar {...(propsOnPage as CalendarElementProps)} key={props.componentName} />;
+    case "Content":
+      return <Content {...(propsOnPage as ContentElementProps)} key={props.componentName} />;
+    default:
+      return <></>;
+  }
+}
