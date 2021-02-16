@@ -28,6 +28,8 @@ const useStyles = makeStyles<Theme, PageSize>((theme: Theme) => ({
     width: (pageSize) => pageSize.widthPx,
     height: (pageSize) => pageSize.heightPx,
     backgroundColor: theme.palette.info.main,
+    fontSize: "4rem",
+    lineHeight: "10rem"
   },
 }));
 

@@ -83,8 +83,6 @@ const useStyles = makeStyles<Theme, { pageSize: PageSize }>({
     ":root": {
       "--inner-width": 800,
       "--inner-height": 800,
-      "--rem-value": 20,
-      fontSize: "calc(1px * var(--rem-size))",
     },
   },
   previewWrapper: {
@@ -95,8 +93,6 @@ const useStyles = makeStyles<Theme, { pageSize: PageSize }>({
     width: "calc(1px * (var(--preview-page-width) + var(--preview-padding)*2))",
     height: "calc(1px * (var(--preview-page-height) + var(--preview-padding)*2))",
     overflow: "hidden",
-    fontSize: "4rem",
-    lineHeight: "10rem",
   },
   pageScale: {
     position: "relative",
@@ -109,7 +105,8 @@ const useStyles = makeStyles<Theme, { pageSize: PageSize }>({
   },
   scaleVariables: {
     "--preview-padding": 10,
-    "--other-content-height": "calc(4.6 * var(--rem-value) + var(--preview-padding)*2)",
+    // can't use length here, like 6rem from the theme because calc() needs a number in --page-scale
+    "--other-content-height": "calc(100 + var(--preview-padding)*2)",
 
     "--full-page-width": ({ pageSize }) => pageSize.widthPx,
     "--full-page-height": ({ pageSize }) => pageSize.heightPx,
@@ -124,7 +121,7 @@ const useStyles = makeStyles<Theme, { pageSize: PageSize }>({
     "--preview-scale": "var(--page-scale);",
   },
   zoomVariables: {
-    touchAction: "none",
+    touchAction: "none", // to fix cancellation of pointermove
     "--mouse-x": 0,
     "--mouse-y": 0,
     "--preview-zoom": 0,
